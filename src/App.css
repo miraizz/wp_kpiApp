@@ -12,7 +12,7 @@ body {
 }
 
 /* Header */
-header {
+.navbar {
   background-color: #0b5c66;
   color: #fff;
   padding: 15px 30px;
@@ -22,7 +22,7 @@ header {
   flex-wrap: wrap;
 }
 
-header h1 {
+.navbar h1 {
   font-size: 24px;
 }
 
@@ -36,6 +36,11 @@ header h1 {
   color: #fff;
   text-decoration: none;
   font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #ff7f50; /* Change to any hover color you prefer */
 }
 
 .search-bar input {
@@ -101,7 +106,7 @@ header h1 {
 
 /* Responsive */
 @media (max-width: 768px) {
-  header {
+  .navbar {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -111,10 +116,31 @@ header h1 {
     align-items: flex-start;
     width: 100%;
     margin-top: 10px;
+    gap: 10px;
   }
 
-  .search-bar {
-    margin-top: 10px;
-    width: 100%;
+  .nav-links a {
+    font-size: 18px;
+  }
+
+  .hero {
+    padding: 80px 20px;
+  }
+
+  .hero h2 {
+    font-size: 28px;
+  }
+
+  .hero p {
+    font-size: 18px;
+    max-width: 600px;
+  }
+
+  .section {
+    padding: 50px 20px;
+  }
+
+  .footer {
+    padding: 30px 20px;
   }
 }

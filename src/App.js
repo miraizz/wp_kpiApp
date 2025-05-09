@@ -1,46 +1,29 @@
 import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+
+import Home from './pages/Home';
+import About from './pages/About';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 
 function App() {
   return (
-    <div className="App">
-      {/* Header / Navbar */}
-      <header>
-        <h1>KPI Management System</h1>
-        <div className="nav-links">
-          <a href="#">Home</a>
-          <a href="#">About</a>
-          <a href="#">Log In</a>
-          <a href="#">Sign Up</a>
-        </div>
-      </header>
+    <Router>
+      <div className="App">
+        <Navbar />
 
-      {/* Hero Section */}
-      <section className="hero">
-        <h2 style={{ fontWeight: 'bold' }}>Welcome to the KPI Management System</h2>
-        <p>Your smart solution to track and manage performance efficiently</p>
-      </section>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Routes>
 
-      {/* About Section */}
-      <section className="section">
-        <h2>About Us</h2>
-        <p>We help organization streamline KPI tracking and achieve operational excellence</p>
-      </section>
-
-      {/* Features Section */}
-      <section className="section">
-        <h2>Features</h2>
-        <p>
-          Intuitive dashboard, real-time insights, user management, and automated reporting.<br />
-          More coming soon...
-        </p>
-      </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <h3>Quote of the day: What gets measured gets managed.</h3>
-        <p>&copy; 2025 KPI Management System. All rights reserved.</p>
-      </footer>
-    </div>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
