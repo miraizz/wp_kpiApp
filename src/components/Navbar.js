@@ -51,7 +51,8 @@ const Navbar = () => {
           {/* Desktop navigation */}
           <div className="nav-links desktop-links">
             <Link to="/">Home</Link>
-            <Link to="/manager">Test</Link>
+            <Link to="/manager">Manager</Link>
+            <Link to="/staff">Staff</Link>
 
             {user ? (
               <div className="profile-dropdown">

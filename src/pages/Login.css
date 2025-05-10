@@ -3,7 +3,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
     background-color: #f8f9fa;
     padding: 20px;
   }
@@ -15,6 +14,7 @@
     width: 100%;
     max-width: 500px;
     padding: 40px;
+    margin: 50px 50px;
   }
   
   .card-header {

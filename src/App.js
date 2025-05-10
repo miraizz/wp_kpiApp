@@ -7,9 +7,10 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import Manager from './pages/Manager';
 import Profile from './pages/Profile';
 import Logout from './pages/Logout';
+import Manager from './pages/Manager';
+import Staff from './pages/Staff';
 
 import SessionManager from './components/SessionManager';
 
@@ -25,9 +26,10 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/manager" element={<Manager />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/manager" element={<Manager />} />
+          <Route path="/staff" element={<Staff />} />
         </Routes>
 
         <Footer />
