@@ -10,6 +10,9 @@ import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import Logout from './pages/Logout';
 import Manager from './pages/Manager';
+import VerifyKPI from './pages/VerifyKPI';
+import KPIDetails from './pages/KPIDetails';
+
 import Staff from './pages/Staff';
 import KPIManagement from './pages/KPIManagement'; 
 
@@ -30,6 +33,8 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/manager" element={<Manager />} />
+          <Route path="/verify-kpi" element={<VerifyKPI />} />
+          <Route path="/verify-kpi/:staffId" element={<KPIDetails />} />
           <Route path="/staff" element={<Staff />} />
           <Route path="/kpi-management" element={<KPIManagement />} />
         </Routes>
