@@ -1,13 +1,16 @@
-/* Footer */
 .footer {
-    background-color: #222;
-    color: white;
-    padding: 50px 30px;
-    text-align: center;
-  }
+  background-color: #222;
+  color: white;
+  padding: 50px 30px;
+  text-align: center;
+}
   
-  .footer h3 {
-    font-size: 15px;
-    margin-bottom: 10px;
-  }
+.footer h3 {
+  font-size: medium;
+  margin-bottom: 10px;
+}
+
+.footer p {
+  font-size: small;
+}
   
