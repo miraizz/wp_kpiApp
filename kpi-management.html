@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KPI Management</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h1>KPI Management System</h1>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Features</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="search-bar">
+      <input type="text" placeholder="Search..." />
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h2>KPI Management</h2>
+    <p>View, add, update, and delete key performance indicators with ease.</p>
+  </section>
+
+  <!-- KPI Form -->
+  <section class="section">
+    <h2>Manage KPIs</h2>
+    <form id="kpiForm" style="max-width: 600px; margin: 0 auto; text-align: left;">
+      <label for="kpi-title">KPI Title:</label><br/>
+      <input type="text" id="kpi-title" name="kpi-title" style="width:100%; padding:10px; margin-bottom:15px;"><br/>
+
+      <label for="kpi-desc">Description:</label><br/>
+      <textarea id="kpi-desc" name="kpi-desc" rows="4" style="width:100%; padding:10px; margin-bottom:15px;"></textarea><br/>
+
+      <label for="kpi-target">Target Value:</label><br/>
+      <input type="number" id="kpi-target" name="kpi-target" style="width:100%; padding:10px; margin-bottom:15px;"><br/>
+
+      <label for="staff-name">Staff Name:</label><br/>
+      <input type="text" id="staff-name" name="staff-name" style="width:100%; padding:10px; margin-bottom:15px;"><br/>
+
+      <label for="department">Department:</label><br/>
+      <input type="text" id="department" name="department" style="width:100%; padding:10px; margin-bottom:20px;"><br/>
+
+      <button type="submit" style="padding:10px 20px; background-color:#0b5c66; color:white; border:none; border-radius:5px;">Add KPI</button>
+      <button type="reset" style="padding:10px 20px; background-color:#aaa; color:white; border:none; border-radius:5px; margin-left:10px;">Clear</button>
+    </form>
+  </section>
+
+  <!-- KPI Table -->
+  <section class="section">
+    <h2>Existing KPIs</h2>
+
+    <div style="text-align: right; margin-bottom: 10px;">
+      <label for="departmentFilter">Filter by Department:</label>
+      <select id="departmentFilter" onchange="filterTable()">
+        <option value="all">All</option>
+        <option value="IT Department">IT Department</option>
+        <option value="HR Department">HR Department</option>
+        <option value="Finance Department">Finance Department</option>
+      </select>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table id="kpiTable" style="width:100%; border-collapse: collapse; border: 2px solid #0b5c66;">
+        <thead style="background-color:#0b5c66; color:white;">
+          <tr>
+            <th onclick="sortTable(0)" style="padding:10px; border:1px solid #0b5c66; cursor:pointer;">Title ⬍</th>
+            <th style="padding:10px; border:1px solid #0b5c66;">Description</th>
+            <th onclick="sortTable(2)" style="padding:10px; border:1px solid #0b5c66; cursor:pointer;">Target ⬍</th>
+            <th onclick="sortTable(3)" style="padding:10px; border:1px solid #0b5c66; cursor:pointer;">Staff Name ⬍</th>
+            <th onclick="sortTable(4)" style="padding:10px; border:1px solid #0b5c66; cursor:pointer;">Department ⬍</th>
+            <th style="padding:10px; border:1px solid #0b5c66;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:10px; border:1px solid #0b5c66;">Update Website</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">Ensure the company site is updated with latest news</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">90%</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">Marsya</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">IT Department</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">
+              <button style="padding:6px 12px; background-color:#0b5c66; color:white; border:none; border-radius:4px;">Edit</button>
+              <button style="padding:6px 12px; background-color:#b22222; color:white; border:none; border-radius:4px; margin-left:5px;">Delete</button>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:10px; border:1px solid #0b5c66;">Recruit Staff</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">Hire 3 new developers</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">70%</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">Amira</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">HR Department</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">
+              <button style="padding:6px 12px; background-color:#0b5c66; color:white; border:none; border-radius:4px;">Edit</button>
+              <button style="padding:6px 12px; background-color:#b22222; color:white; border:none; border-radius:4px; margin-left:5px;">Delete</button>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:10px; border:1px solid #0b5c66;">Submit Q2 Budget</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">Prepare and submit Q2 financial forecast</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">60%</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">Firzanah</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">Finance Department</td>
+            <td style="padding:10px; border:1px solid #0b5c66;">
+              <button style="padding:6px 12px; background-color:#0b5c66; color:white; border:none; border-radius:4px;">Edit</button>
+              <button style="padding:6px 12px; background-color:#b22222; color:white; border:none; border-radius:4px; margin-left:5px;">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 KPI Management System. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    function sortTable(colIndex) {
+      const table = document.getElementById("kpiTable");
+      const tbody = table.tBodies[0];
+      const rows = Array.from(tbody.rows);
+      const isNumeric = !isNaN(rows[0]?.cells[colIndex]?.innerText.trim());
+
+      rows.sort((a, b) => {
+        const valA = a.cells[colIndex].innerText.trim().toLowerCase();
+        const valB = b.cells[colIndex].innerText.trim().toLowerCase();
+        return isNumeric
+          ? parseFloat(valA) - parseFloat(valB)
+          : valA.localeCompare(valB);
+      });
+
+      tbody.innerHTML = "";
+      rows.forEach(row => tbody.appendChild(row));
+    }
+
+    function filterTable() {
+      const filter = document.getElementById("departmentFilter").value;
+      const table = document.getElementById("kpiTable");
+      const rows = table.tBodies[0].rows;
+
+      for (let i = 0; i < rows.length; i++) {
+        const dept = rows[i].cells[4].innerText;
+        rows[i].style.display = (filter === "all" || dept === filter) ? "" : "none";
+      }
+    }
+
+    document.getElementById("kpiForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const title = document.getElementById("kpi-title").value.trim();
+      const desc = document.getElementById("kpi-desc").value.trim();
+      const target = document.getElementById("kpi-target").value.trim();
+      const staff = document.getElementById("staff-name").value.trim();
+      const dept = document.getElementById("department").value.trim();
+
+      if (!title || !desc || !target || !staff || !dept) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const tbody = document.getElementById("kpiTable").getElementsByTagName("tbody")[0];
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td style="padding:10px; border:1px solid #0b5c66;">${title}</td>
+        <td style="padding:10px; border:1px solid #0b5c66;">${desc}</td>
+        <td style="padding:10px; border:1px solid #0b5c66;">${target}%</td>
+        <td style="padding:10px; border:1px solid #0b5c66;">${staff}</td>
+        <td style="padding:10px; border:1px solid #0b5c66;">${dept}</td>
+        <td style="padding:10px; border:1px solid #0b5c66;">
+          <button style="padding:6px 12px; background-color:#0b5c66; color:white; border:none; border-radius:4px;">Edit</button>
+          <button style="padding:6px 12px; background-color:#b22222; color:white; border:none; border-radius:4px; margin-left:5px;">Delete</button>
+        </td>
+      `;
+
+      tbody.appendChild(row);
+      document.getElementById("kpiForm").reset();
+    });
+  </script>
+</body>
+</html>
