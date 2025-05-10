@@ -12,7 +12,7 @@ const Navbar = () => {
           <Link to="/" className="navbar-brand">
             <h1>KPIHub</h1>
           </Link>
-          
+
           <button 
             className={`hamburger ${isOpen ? 'open' : ''}`}
             onClick={() => setIsOpen(!isOpen)}
@@ -22,18 +22,24 @@ const Navbar = () => {
             <span></span>
             <span></span>
           </button>
-          
+
           <div className="nav-links desktop-links">
+            <Link to="/">Home</Link>
+            <Link to="/about">About</Link>
             <Link to="/login">Log In</Link>
             <Link to="/signup">Sign Up</Link>
+            <Link to="/verify-kpi">Verify KPI</Link>
           </div>
         </div>
       </nav>
-      
+
       {/* Mobile menu (separate element) */}
       <div className={`mobile-menu ${isOpen ? 'open' : ''}`}>
+        <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
+        <Link to="/about" onClick={() => setIsOpen(false)}>About</Link>
         <Link to="/login" onClick={() => setIsOpen(false)}>Log In</Link>
         <Link to="/signup" onClick={() => setIsOpen(false)}>Sign Up</Link>
+        <Link to="/verify-kpi" onClick={() => setIsOpen(false)}>Verify KPI</Link>
       </div>
     </>
   );
