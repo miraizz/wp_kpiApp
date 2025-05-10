@@ -53,7 +53,7 @@ const Signup = () => {
               type="text"
               id="fullName"
               name="fullName"
-              placeholder="John Doe"
+              placeholder="Ahmad Afiq"
               value={form.fullName}
               onChange={handleChange}
               required
@@ -135,7 +135,7 @@ const Signup = () => {
               type="tel"
               id="phone"
               name="phone"
-              placeholder="+1 234 567 8900"
+              placeholder="+6012-3456789"
               value={form.phone}
               onChange={handleChange}
             />

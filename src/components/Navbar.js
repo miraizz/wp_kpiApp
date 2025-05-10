@@ -54,6 +54,7 @@ const Navbar = () => {
             <Link to="/manager">Manager</Link>
             <Link to="/staff">Staff</Link>
             <Link to="/kpi-management">KPI</Link>
+            <Link to="/verify-kpi">Verify</Link>
 
             {user ? (
               <div className="profile-dropdown">

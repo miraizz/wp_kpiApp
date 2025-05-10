@@ -9,11 +9,12 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import Logout from './pages/Logout';
+
 import Manager from './pages/Manager';
+import Staff from './pages/Staff';
+
 import VerifyKPI from './pages/VerifyKPI';
 import KPIDetails from './pages/KPIDetails';
-
-import Staff from './pages/Staff';
 import KPIManagement from './pages/KPIManagement'; 
 
 import SessionManager from './components/SessionManager';
