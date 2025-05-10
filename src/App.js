@@ -7,10 +7,14 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import Profile from './pages/Profile';
+import Logout from './pages/Logout';
+import SessionManager from './components/SessionManager';
 
 function App() {
   return (
     <Router>
+      <SessionManager/>
       <div className="App">
         <Navbar />
 
@@ -19,6 +23,8 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/logout" element={<Logout />} />
         </Routes>
 
         <Footer />

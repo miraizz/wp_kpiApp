@@ -40,7 +40,7 @@ body {
 }
 
 .nav-links a:hover {
-  color: #ff7f50; /* Change to any hover color you prefer */
+  color: #000000; /* Change to any hover color you prefer */
 }
 
 .search-bar input {
@@ -143,4 +143,99 @@ body {
   .footer {
     padding: 30px 20px;
   }
+}
+
+.form-container {
+  max-width: 500px;
+  margin: 80px auto;
+  background: white;
+  padding: 90px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-container input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.form-container button {
+  width: 100%;
+  padding: 12px;
+  background-color: teal;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-container button:hover {
+  background-color: #0b5c66;
+}
+
+.form-container p {
+  text-align: center;
+}
+
+.flex-row {
+  display: flex;
+  gap: 10px;
+}
+
+.flex-row input,
+.flex-row select {
+  flex: 1;
+}
+
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+  margin-left: 15px;
+}
+
+.profile-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  padding: 10px;
+  z-index: 1000;
+  border-radius: 6px;
+  min-width: 150px;
+}
+
+.dropdown-menu a,
+.dropdown-menu button {
+  display: block;
+  padding: 5px 2px;
+  text-decoration: none;
+  color: black;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu button:hover {
+  background-color: #a3dbe6;
 }
