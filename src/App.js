@@ -11,6 +11,7 @@ import Profile from './pages/Profile';
 import Logout from './pages/Logout';
 import Manager from './pages/Manager';
 import Staff from './pages/Staff';
+import KPIManagement from './pages/KPIManagement'; 
 
 import SessionManager from './components/SessionManager';
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/manager" element={<Manager />} />
           <Route path="/staff" element={<Staff />} />
+          <Route path="/kpi-management" element={<KPIManagement />} />
         </Routes>
 
         <Footer />
