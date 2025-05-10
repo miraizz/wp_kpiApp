@@ -1,0 +1,112 @@
+.manager-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 20px;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    background-color: #f8f9fa;
+}
+
+.content-container {
+    width: 100%;
+    margin-bottom: 30px;
+    padding: 0 20px;
+}
+
+.heading {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.description {
+    font-size: 1rem;
+    color: #555;
+    text-align: left;
+    max-width: 800px;
+}
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 20px;
+    width: 100%;
+    padding: 0 20px;
+    margin-bottom: 20px;
+}
+
+.big-card-container {
+    width: 100%;
+    gap: 20px;
+    padding: 0 20px;
+    margin-bottom: 20px;
+}
+
+.card {
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 150px;
+    background-color: white;
+    border: 2px solid transparent; 
+    transition: all 0.3s ease;
+}
+
+.big-card {
+    max-width: 100%; 
+    height: 500px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.total-kpis-card {
+    border-color: rgba(0, 0, 255, 0.3);
+}
+
+.on-track-card {
+    border-color: rgba(0, 128, 0, 0.3); /* Green with transparency */
+}
+
+.at-risk-card {
+    border-color: rgba(255, 165, 0, 0.3); /* Orange with transparency */
+}
+
+.behind-card {
+    border-color: rgba(255, 0, 0, 0.3); /* Red with transparency */
+}
+
+.card-title {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.card-content {
+    font-size: 14px;
+    color: gray;
+}
+
+.total-kpis { color: blue; }
+.on-track { color: green; }
+.at-risk { color: orange; }
+.behind { color: red; }
