@@ -50,3 +50,27 @@
     opacity: 1;
   }
 }
+
+.toast-notification {
+  justify-content: space-between; /* make space between message and close button */
+}
+
+.toast-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Close button */
+.toast-close {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+}
+
+.toast-close:hover {
+  color: #444;
+}

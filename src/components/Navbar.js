@@ -1,21 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Notification from './Notifications';
 
 const Navbar = () => {
   const user = sessionStorage.getItem('user');
+  const role = sessionStorage.getItem('role');
   const [open, setOpen] = useState(false);
   const [notification, setNotification] = useState('');
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [user]);
 
   const handleLogout = () => {
     sessionStorage.clear();
     setNotification('You have been logged out.');
-
-    // Delay navigation to show toast first
-    setTimeout(() => {
-      navigate('/');
-    }, 2000);
+    setTimeout(() => navigate('/'), 2000);
   };
 
   return (
@@ -29,32 +42,52 @@ const Navbar = () => {
       )}
 
       <div className="logo">
-        <h1>KPI Management System</h1>
+        <h1>KPIHub</h1>
       </div>
 
-      <div className="nav-links">
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
+      <div className="nav-links-boxed">
+        {/* Home only visible before login */}
+        {!user && <Link to="/" className="nav-item">Home</Link>}
 
-        {user ? (
-          <div className="profile-dropdown">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
-              alt="Profile"
-              className="profile-icon"
-              onClick={() => setOpen(!open)}
-            />
-            {open && (
-              <div className="dropdown-menu">
-                <Link to="/profile">Profile Settings</Link>
-                <button onClick={handleLogout}>Logout</button>
-              </div>
-            )}
-          </div>
+        {/* Logged in users see Dashboard first */}
+        {user && (
+          <Link
+            to={role === 'Manager' ? '/manager-dashboard' : '/staff-dashboard'}
+            className="nav-item"
+          >
+            Dashboard
+          </Link>
+        )}
+
+        <Link to="/about" className="nav-item">About</Link>
+
+        {!user ? (
+          <>
+            <Link to="/login" className="nav-item">Log In</Link>
+            <Link to="/signup" className="nav-item">Sign Up</Link>
+          </>
         ) : (
           <>
-            <Link to="/login">Log In</Link>
-            <Link to="/signup">Sign Up</Link>
+            <div className="nav-item notification">
+              <span className="icon">🔔</span>
+              <span className="badge">1</span>
+            </div>
+
+            <div
+              className="nav-item user-email"
+              ref={dropdownRef}
+              style={{ position: 'relative' }}
+            >
+              <span className="icon">👤</span>
+              <span onClick={() => setOpen(prev => !prev)}>{user}</span>
+
+              {open && (
+                <div className="dropdown-menu">
+                  <Link to="/profile" onClick={() => setOpen(false)}>Profile Settings</Link>
+                  <button onClick={handleLogout}>Logout</button>
+                </div>
+              )}
+            </div>
           </>
         )}
       </div>

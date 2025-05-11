@@ -210,32 +210,84 @@ body {
 
 .dropdown-menu {
   position: absolute;
-  top: 40px;
+  top: 100%;
   right: 0;
   background-color: white;
   border: 1px solid #ddd;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
-  padding: 10px;
-  z-index: 1000;
   border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999; 
   min-width: 150px;
+  padding: 10px;
 }
 
 .dropdown-menu a,
 .dropdown-menu button {
   display: block;
-  padding: 5px 2px;
-  text-decoration: none;
-  color: black;
-  background: none;
-  border: none;
   width: 100%;
   text-align: left;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1f2937;
+  text-decoration: none;
   cursor: pointer;
-  font-size: 15px;
+  transition: background-color 0.2s ease;
 }
 
 .dropdown-menu a:hover,
 .dropdown-menu button:hover {
-  background-color: #a3dbe6;
+  background-color: #f3f4f6;
+  color: #111827;
+  border-radius: 4px;
 }
+
+.nav-links-boxed {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  background-color: #a7d8de;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #00494d;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background-color: #61aeb4;
+  color: white;
+}
+
+.nav-item .icon {
+  margin-right: 6px;
+}
+
+/* Notification badge */
+.notification {
+  position: relative;
+  cursor: default;
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #dc2626;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+

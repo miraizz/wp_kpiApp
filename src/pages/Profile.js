@@ -37,8 +37,6 @@ const Profile = () => {
     setNotification('Profile updated successfully (demo)');
   };
 
-
-
   const handleChangePassword = () => {
     if (passwords.new !== passwords.confirm) {
         setNotification('New passwords do not match.');
@@ -51,8 +49,6 @@ const Profile = () => {
   const handleDeactivate = () => {
     setNotification("Account deactivated (demo)");
   };
-
-  
 
   return (
     <div className="profile-container">

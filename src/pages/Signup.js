@@ -40,6 +40,7 @@ const handleSubmit = (e) => {
 
 
   return (
+    <section style={{ backgroundColor: '#e6f7f9', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
     <div className="form-container">
       <h2>Create an account</h2>
       <p>Enter your details below to create your account</p>
@@ -63,6 +64,7 @@ const handleSubmit = (e) => {
       </form>
       <p style={{ textAlign: 'center', marginTop: '10px' }}>Already have an account? <a href="/login">Sign in</a></p>
     </div>
+    </section>
   );
 };
 
