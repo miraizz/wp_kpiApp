@@ -15,7 +15,7 @@ const SessionManager = () => {
       setTimeout(() => {
         navigate('/');
       }, 2000);
-    }, 30000); // session expires after 30 seconds
+    }, 3000000); // session expires after 30 seconds
 
     return () => clearTimeout(timer);
   }, [navigate]);

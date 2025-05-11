@@ -1,113 +1,263 @@
 .manager-page {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    padding: 20px;
-    width: 100%;
-    margin: 0;
-    box-sizing: border-box;
-    background-color: #f8f9fa;
+    padding: 2rem;
+    background-color: #f2f2f7;
 }
 
-.content-container {
-    width: 100%;
-    margin-bottom: 30px;
-    padding: 0 20px;
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
 .heading {
-    color: #0b5c66;
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 0px;
-    text-align: left;
+    font-size: 2rem;
+    color: #1c1c1e;
 }
 
 .description {
-    font-size: 1rem;
-    color: #555;
-    text-align: left;
-    max-width: 100%;
+    color: #6b7280;
 }
 
-.cards-container {
+.tab-card {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 1rem 1.5rem;
+}
+
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    background-color: #d1d1d6;
+    border-radius: 12px;
+    padding: 0.25rem;
+    margin-bottom: 1rem;
+    justify-content: center;
+}
+
+.tab-button {
+    flex: 1;
+    background-color: #d1d1d6;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #3a3a3c;
+    cursor: pointer;
+    transition: none;
+}
+
+.tab-button.active {
+    background-color: #ffffff;
+    color: #000000;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.tab-content {
+    padding: 1rem 0;
+    color: #1c1c1e;
+    font-size: 1rem;
+}
+
+.manager-cards-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 20px;
-    width: 100%;
-    padding: 0 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
     margin-bottom: 20px;
 }
 
-.big-card-container {
-    width: 100%;
-    gap: 20px;
-    padding: 0 20px;
-    margin-bottom: 50px;
+.card-name {
+    font-size: 16px;
+    color: #000;
 }
 
-.card {
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
+.card-number {
+    font-size: 30px;
+    font-weight: 700;
+    color: #000;
+    margin-top: 0.5rem;
+}
+
+.card-description {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 0.5rem;
+}
+
+.chart-container {
+    margin-top: 1rem;
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.chart-card {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    min-height: 150px;
-    background-color: white;
-    border: 2px solid transparent; 
-    transition: all 0.3s ease;
+    background: white;
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
-.big-card {
-    max-width: 100%; 
-    height: 500px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    box-sizing: border-box;
+.chart-bar {
+    flex: 2;
+}
+
+.chart-donut {
+    flex: 1;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+.all-kpis-container {
+    width: 100%;
+    max-width: 100%;
 }
 
-.total-kpis-card {
-    border-color: rgba(0, 0, 255, 0.3);
+.search-bar-container {
+    width: 100%;
+    margin-bottom: 1.5rem;
 }
 
-.on-track-card {
-    border-color: rgba(0, 128, 0, 0.3); /* Green with transparency */
-}
-
-.at-risk-card {
-    border-color: rgba(255, 165, 0, 0.3); /* Orange with transparency */
-}
-
-.behind-card {
-    border-color: rgba(255, 0, 0, 0.3); /* Red with transparency */
-}
-
-.card-title {
-    font-size: 30px;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.card-content {
+.search-bar {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
     font-size: 14px;
-    color: gray;
+    box-sizing: border-box;
+    outline: none;
 }
 
-.total-kpis { color: blue; }
-.on-track { color: green; }
-.at-risk { color: orange; }
-.behind { color: red; }
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+/* KPI Card Styling */
+.kpi-card {
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Title and Description */
+.kpi-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1c1c1e;
+}
+
+.kpi-description {
+    font-size: 12px;
+    color: #555;
+    margin: 5px 0;
+}
+
+.kpi-priority {
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+    margin-left: 10px;
+}
+
+.kpi-priority.high {
+    background-color: #dc2626;
+    /* red */
+}
+
+.kpi-priority.medium {
+    background-color: #f59e0b;
+    /* amber */
+}
+
+.kpi-priority.low {
+    background-color: #10b981;
+    /* green */
+}
+
+/* Metadata Fields */
+.kpi-category {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Dates */
+.kpi-start-date,
+.kpi-due-date {
+    font-size: 10px;
+    color: #888;
+}
+
+/* Progress Bar */
+.progress-bar-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    height: 8px;
+    margin-top: 0.5rem;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #4caf50;
+    /* Green color for the progress */
+    border-radius: 10px;
+    transition: width 0.3s ease-in-out;
+}
+
+@media (max-width: 1024px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Responsive Styling */
+@media (max-width: 1200px) {
+    .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .cards-container {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-row {
+        flex-direction: column;
+    }
+
+    .chart-bar,
+    .chart-donut {
+        width: 100%;
+    }
+
+    .chart-donut .chart-container {
+        max-width: none;
+    }
+}
