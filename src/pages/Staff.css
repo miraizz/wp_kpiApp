@@ -142,31 +142,38 @@
     background-color: #198754;
 }
 
-/* Progress bars */
+/* Simple CSS-only fix - minimal approach */
+
+/* Main progress container */
 .progress-container {
-    height: 12px;
-    background-color: #f0f0f0;
-    border-radius: 6px;
-    overflow: hidden;
-    margin: 12px 0;
+    height: 18px !important; /* Thinner height */
+    background-color: #f0f0f0 !important;
+    border-radius: 9px !important;
+    overflow: hidden !important;
+    margin: 12px 0 !important;
+    position: relative !important;
 }
 
+/* Progress bar styling */
 .progress-bar {
-    height: 100%;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 10px;
-    line-height: 12px;
-    color: white;
-    font-weight: 600;
+    height: 18px !important;
+    display: flex !important; /* Use flexbox for centering */
+    align-items: center !important; /* Vertical center */
+    justify-content: center !important; /* Horizontal center */
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: white !important; /* Text color */
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3) !important;
+    border-radius: 9px !important;
 }
 
+/* Success and info variants */
 .progress-bar.success {
-    background-color: #28a745;
+    background-color: #28a745 !important;
 }
 
 .progress-bar.info {
-    background-color: #17a2b8;
+    background-color: #17a2b8 !important;
 }
 
 /* Verification badges */
