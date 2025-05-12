@@ -1,312 +1,108 @@
-/* Main container styles */
-.staff-container {
-    padding: 24px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .staff-heading {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 24px;
-  }
-  
-  /* Grid and layout */
-  .row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -12px;
-  }
-  
-  .col-6 {
-    width: 50%;
-    padding: 0 12px;
-    box-sizing: border-box;
-  }
-  
-  @media (max-width: 768px) {
-    .col-6 {
-      width: 100%;
-    }
-  }
-  
-  /* Summary cards */
-  .summary-cards {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-    gap: 16px;
-  }
-  
-  .summary-card {
-    flex: 1;
-    min-width: 160px;
-    min-height: 120px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 16px;
-    text-align: center;
+.staff-page {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  
-  .summary-card-title {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 8px;
-  }
-  
-  .summary-card-value {
-    font-size: 2.5rem;
-    font-weight: bold;
-  }
-  
-  /* KPI cards */
-  .kpi-card {
-    background-color: white;
-    border: 1px solid #eaeaea;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  
-  .kpi-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .kpi-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  
-  .kpi-title {
-    font-size: 18px;
-    font-weight: 600;
+    min-height: 100vh;
+    padding: 20px;
+    width: 100%;
     margin: 0;
-    display: flex;
-    align-items: center;
-  }
-  
-  .kpi-description {
-    font-size: 14px;
-    color: #666;
-    margin: 12px 0;
-  }
-  
-  .kpi-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 12px;
-  }
-  
-  .kpi-meta {
-    font-size: 14px;
-    color: #666;
-  }
-  
-  /* Status chips */
-  .status-chip {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    color: white !important; /* Force white text for all status chips */
-    text-transform: uppercase;
-  }
-  
-  .status-chip.on-track {
-    background-color: #28a745;
-  }
-  
-  .status-chip.at-risk {
-    background-color: #ffc107;
-    color: white !important; /* Override specifically for at-risk */
-  }
-  
-  .status-chip.behind {
-    background-color: #dc3545;
-  }
-  
-  .status-chip.completed {
-    background-color: #198754;
-  }
-  
-  /* Progress bars */
-  .progress-container {
-    height: 12px;
-    background-color: #f0f0f0;
-    border-radius: 6px;
-    overflow: hidden;
-    margin: 12px 0;
-  }
-  
-  .progress-bar {
-    height: 100%;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 10px;
-    line-height: 12px;
-    color: white;
-    font-weight: 600;
-  }
-  
-  .progress-bar.success {
-    background-color: #28a745;
-  }
-  
-  .progress-bar.info {
-    background-color: #17a2b8;
-  }
-  
-  /* Verification badges */
-  .verification-badge {
-    display: inline-block;
-    font-size: 12px;
-    padding: 2px 8px;
-    border-radius: 12px;
-    margin-left: 8px;
-    font-weight: 500;
-  }
-  
-  .verification-badge.accepted {
-    background-color: #d1e7dd;
-    color: #0f5132;
-    border: 1px solid #badbcc;
-  }
-  
-  .verification-badge.pending {
-    background-color: #fff3cd;
-    color: #664d03;
-    border: 1px solid #ffecb5;
-  }
-  
-  .verification-badge.rejected {
-    background-color: #f8d7da;
-    color: #842029;
-    border: 1px solid #f5c2c7;
-  }
-  
-  .verification-badge.verified {
-    background-color: #d6f5d6;
-    color: #0a5e0a;
-    border: 1px solid #a1dea1;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 12px;
-    margin-left: 8px;
-  }
-  
-  /* Search and filters */
-  .search-filters {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-  }
-  
-  .search-input {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    width: 40%;
-    margin-bottom: 12px;
-  }
-  
-  .filter-group {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 12px;
-  }
-  
-  .filter-btn {
-    background-color: white;
-    color: #0d6efd;
-    border: 1px solid #e2e2e2;
-    border-radius: 4px;
-    padding: 6px 12px;
-    margin: 0 5px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .filter-btn.active {
-    background-color: #0d6efd;
-    color: white;
-    border-color: #0d6efd;
-  }
-  
-  .filter-btn:hover:not(.active) {
-    background-color: #0d6efd;
-    color: white;
-    border-color: #0d6efd;
-  }
-  
-  .sort-select {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    margin-bottom: 12px;
-    width: 120px;
-    background-color: white;
-  }
-  
-  /* Buttons */
-  .btn {
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 1px solid transparent;
-  }
-  
-  .btn-primary {
-    background-color: #0d6efd;
-    color: white;
-    border-color: #0d6efd;
-  }
-  
-  .btn-primary:hover {
-    background-color: #0b5ed7;
-  }
-  
-  .btn-outline-primary {
-    background-color: white;
-    color: #0d6efd;
-    border-color: #0d6efd;
-  }
-  
-  .btn-outline-primary:hover {
+    box-sizing: border-box;
     background-color: #f8f9fa;
-  }
-  
-  .btn-small {
-    padding: 3px 12px;
-    font-size: 13px;
-  }
-  
-  /* Color classes */
-  .total-kpis { color: #0d6efd; } /* Bright blue */
-  .on-track { color: #198754; } /* Bright green */
-  .at-risk { color: #fd7e14; } /* Bright orange */
-  .behind { color: #dc3545; } /* Bright red */
-  .completed-kpi { color: #198754; } /* Green */
-  .incomplete-kpi { color: #dc3545; } /* Gray */
-  .verified-kpi { color: #0dcaf0; } /* Cyan */
+}
+
+.content-container {
+    width: 100%;
+    margin-bottom: 30px;
+    padding: 0 20px;
+}
+
+.heading {
+    color: #0b5c66;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    text-align: left;
+}
+
+.description {
+    font-size: 1rem;
+    color: #555;
+    text-align: left;
+    max-width: 100%;
+}
+
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 20px;
+    width: 100%;
+    padding: 0 20px;
+    margin-bottom: 20px;
+}
+
+.big-card-container {
+    width: 100%;
+    gap: 20px;
+    padding: 0 20px;
+    margin-bottom: 50px;
+}
+
+.card {
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 150px;
+    background-color: white;
+    border: 2px solid transparent; 
+    transition: all 0.3s ease;
+}
+
+.big-card {
+    max-width: 100%; 
+    height: 500px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.total-kpis-card {
+    border-color: rgba(0, 0, 255, 0.3);
+}
+
+.on-track-card {
+    border-color: rgba(0, 128, 0, 0.3); /* Green with transparency */
+}
+
+.at-risk-card {
+    border-color: rgba(255, 165, 0, 0.3); /* Orange with transparency */
+}
+
+.behind-card {
+    border-color: rgba(255, 0, 0, 0.3); /* Red with transparency */
+}
+
+.card-title {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.card-content {
+    font-size: 14px;
+    color: gray;
+}
+
+.total-kpis { color: blue; }
+.on-track { color: green; }
+.at-risk { color: orange; }
+.behind { color: red; }
