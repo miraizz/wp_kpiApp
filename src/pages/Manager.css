@@ -1,3 +1,6 @@
+/* ===================
+   Base Layout
+=================== */
 .manager-page {
     padding: 2rem;
     background-color: #f2f2f7;
@@ -17,6 +20,9 @@
     color: #6b7280;
 }
 
+/* ===================
+   Tabs & Card Layout
+=================== */
 .tab-card {
     max-width: 800px;
     margin: 0 auto;
@@ -45,7 +51,6 @@
     font-size: 14px;
     color: #3a3a3c;
     cursor: pointer;
-    transition: none;
 }
 
 .tab-button.active {
@@ -60,6 +65,9 @@
     font-size: 1rem;
 }
 
+/* ===================
+   Cards & KPI Summary
+=================== */
 .manager-cards-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -85,6 +93,9 @@
     margin-top: 0.5rem;
 }
 
+/* ===================
+   Charts
+=================== */
 .chart-container {
     margin-top: 1rem;
     width: 100%;
@@ -122,24 +133,12 @@
     align-items: center;
 }
 
+/* ===================
+   KPI Grid
+=================== */
 .all-kpis-container {
     width: 100%;
     max-width: 100%;
-}
-
-.search-bar-container {
-    width: 100%;
-    margin-bottom: 1.5rem;
-}
-
-.search-bar {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
-    box-sizing: border-box;
-    outline: none;
 }
 
 .kpi-grid {
@@ -148,7 +147,6 @@
     gap: 1.5rem;
 }
 
-/* KPI Card Styling */
 .kpi-card {
     padding: 1.5rem;
     border: 1px solid #ddd;
@@ -157,7 +155,6 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Title and Description */
 .kpi-title {
     font-size: 18px;
     font-weight: bold;
@@ -181,33 +178,27 @@
 
 .kpi-priority.high {
     background-color: #dc2626;
-    /* red */
 }
 
 .kpi-priority.medium {
     background-color: #f59e0b;
-    /* amber */
 }
 
 .kpi-priority.low {
     background-color: #10b981;
-    /* green */
 }
 
-/* Metadata Fields */
 .kpi-category {
     font-size: 12px;
     font-weight: 500;
 }
 
-/* Dates */
 .kpi-start-date,
 .kpi-due-date {
     font-size: 10px;
     color: #888;
 }
 
-/* Progress Bar */
 .progress-bar-container {
     width: 100%;
     background-color: #e0e0e0;
@@ -219,9 +210,119 @@
 .progress-bar {
     height: 100%;
     background-color: #4caf50;
-    /* Green color for the progress */
     border-radius: 10px;
     transition: width 0.3s ease-in-out;
+}
+
+/* ===================
+   Search Bar
+=================== */
+.search-bar-container {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+/* ===================
+   Team Panel
+=================== */
+.team-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+    .team-container {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+
+.team-list {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.team-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.team-header {
+    border-bottom: 1px solid #ddd;
+    padding: 0.75rem;
+}
+
+.team-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.team-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.team-item:hover {
+    background-color: #f9f9f9;
+}
+
+.team-item.selected {
+    background-color: #e6f7ff;
+}
+
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #ddd;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    margin-right: 1rem;
+}
+
+.staff-info {
+    flex-grow: 1;
+}
+
+.staff-name {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.staff-department,
+.kpi-count {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+/* ===================
+   Responsive Layout
+=================== */
+@media (max-width: 1200px) {
+    .manager-cards-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 1024px) {
@@ -234,17 +335,8 @@
     .kpi-grid {
         grid-template-columns: 1fr;
     }
-}
 
-/* Responsive Styling */
-@media (max-width: 1200px) {
-    .cards-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .cards-container {
+    .manager-cards-container {
         grid-template-columns: 1fr;
     }
 
