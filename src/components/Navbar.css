@@ -8,8 +8,8 @@
   z-index: 100;
 }
 
-.navbar-container {
-  max-width: 100%;
+.nav-navbar-container {
+  max-width: 100;
   margin: 0 auto;
   padding: 0 20px;
   display: flex;
@@ -47,12 +47,12 @@
 }
 
 /* Profile Label */
-.profile-label-wrapper {
+.nav-profile-label-wrapper {
   position: relative;
   cursor: pointer;
 }
 
-.profile-label {
+.nav-profile-label {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -62,16 +62,16 @@
   transition: background 0.3s ease;
 }
 
-.profile-label:hover {
+.nav-profile-label:hover {
   background-color: #8bcfc7;
 }
 
-.profile-icon-label {
+.nav-profile-icon-label {
   color: purple;
   font-size: 16px;
 }
 
-.profile-email {
+.nav-profile-email {
   font-size: 14px;
   color: #333;
   font-weight: 500;
@@ -79,10 +79,9 @@
 }
 
 /* Profile Dropdown Menu */
-.dropdown-menu {
+.nav-dropdown-menu {
   position: absolute;
   right: 0;
-  top: 120%;
   top: 120%;
   background: white;
   border-radius: 4px;
@@ -93,15 +92,13 @@
   gap: 8px;
   min-width: 150px;
   z-index: 200;
-  z-index: 200;
 }
 
-.dropdown-menu a,
-.dropdown-menu button {
+.nav-dropdown-menu a,
+.nav-dropdown-menu button {
   background-color: transparent;
   color: #333;
   text-decoration: none;
-  padding: 8px 12px;
   padding: 8px 12px;
   border: none;
   text-align: left;
@@ -112,11 +109,10 @@
   cursor: pointer;
 }
 
-.dropdown-menu a:hover,
-.dropdown-menu button:hover {
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu button:hover {
   background-color: #a9d6d1;
 }
-
 
 
 /* Hamburger Menu */
@@ -145,25 +141,25 @@
   top: 0;
 }
 
-.hamburger span:nth-child(2) {
+.nav-hamburger span:nth-child(2) {
   top: 50%;
   transform: translateY(-50%);
 }
 
-.hamburger span:nth-child(3) {
+.nav-hamburger span:nth-child(3) {
   bottom: 0;
 }
 
 /* Hamburger open animation */
-.hamburger.open span:nth-child(1) {
+.nav-hamburger.open span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
 
-.hamburger.open span:nth-child(2) {
+.nav-hamburger.open span:nth-child(2) {
   opacity: 0;
 }
 
-.hamburger.open span:nth-child(3) {
+.nav-hamburger.open span:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
@@ -182,7 +178,7 @@
   z-index: 99;
 }
 
-.mobile-menu.open {
+.nav-mobile-menu.open {
   top: 70px;
   /* Matches navbar height */
 }
@@ -204,7 +200,6 @@
   cursor: pointer;
 }
 
-/* Responsive */
 /* Responsive */
 @media (max-width: 768px) {
   .hamburger {

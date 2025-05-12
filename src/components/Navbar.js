@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Notification from './Notifications';
 import './Navbar.css';
@@ -7,11 +6,9 @@ import './Navbar.css';
 const Navbar = () => {
   const user = sessionStorage.getItem('user');
   const role = sessionStorage.getItem('role');
-  const role = sessionStorage.getItem('role');
   const [isOpen, setIsOpen] = useState(false);
   const [notification, setNotification] = useState('');
   const [profileOpen, setProfileOpen] = useState(false);
-  const dropdownRef = useRef(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -58,24 +55,23 @@ const Navbar = () => {
         />
       )}
 
-      <nav className="navbar">
-        <div className="navbar-container">
-          <Link to="/" className="navbar-brand">
+      <nav className="nav-navbar">
+        <div className="nav-navbar-container">
+          <Link to="/" className="nav-navbar-brand">
             <h1>KPIHub</h1>
           </Link>
 
           {/* Hamburger menu */}
           <button
-            className={`hamburger ${isOpen ? 'open' : ''}`}
+            className={`nav-hamburger ${isOpen ? 'open' : ''}`}
             onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
+            aria-label="Menu"
           >
-            <span></span><span></span><span></span>
             <span></span><span></span><span></span>
           </button>
 
           {/* Desktop Links */}
-          <div className="nav-links desktop-links">
+          <div className="nav-desktop-links">
             {!user && <Link to="/">Home</Link>}
 
             {role === 'Manager' && (
@@ -95,19 +91,17 @@ const Navbar = () => {
 
             {user ? (
               <div
-                className="profile-label-wrapper"
+                className="nav-profile-label-wrapper"
                 ref={dropdownRef}
                 onClick={() => setProfileOpen(!profileOpen)}
               >
-                <div className="profile-label">
-                  <span className="profile-icon-label">👤</span>
-                  <span className="profile-email">{user}</span>
+                <div className="nav-profile-label">
+                  <span className="nav-profile-icon-label">👤</span>
+                  <span className="nav-profile-email">{user}</span>
                 </div>
                 {profileOpen && (
                   <div className="nav-dropdown-menu">
-                    <Link to="/profile" onClick={() => setProfileOpen(false)}>
-                      Profile Settings
-                    </Link>
+                    <Link to="/profile" onClick={() => setProfileOpen(false)}>Profile Settings</Link>
                     <button onClick={handleLogout}>Logout</button>
                   </div>
                 )}
@@ -123,7 +117,7 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile Menu */}
-      <div className={`mobile-menu ${isOpen ? 'open' : ''}`}>
+      <div className={`nav-mobile-menu ${isOpen ? 'open' : ''}`}>
         {role === 'Manager' && (
           <>
             <Link to="/manager" onClick={() => setIsOpen(false)}>Dashboard</Link>
@@ -144,9 +138,6 @@ const Navbar = () => {
         )}
 
         {!user && (
-        )}
-
-        {!user && (
           <>
             <Link to="/login" onClick={() => setIsOpen(false)}>Log In</Link>
             <Link to="/signup" onClick={() => setIsOpen(false)}>Sign Up</Link>
@@ -158,4 +149,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
