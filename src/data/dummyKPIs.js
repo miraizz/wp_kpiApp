@@ -137,7 +137,8 @@ export const dummyKPIs = [
       startDate: "2025-07-12",
       dueDate: "2025-09-15",
       assignedTo: { name: "Zikri", staffId: "EMP-205", department: "Finance" },
-      assignedBy: { name: "Priya Patel", managerId: "MGR-110" }
+      assignedBy: { name: "Priya Patel", managerId: "MGR-110" },
+      evidence: "/files/report.pdf"
     }
   ];
 

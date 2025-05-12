@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { dummyKPIs, getStaffKpiCount } from '../data/dummyKPIs';
 import './VerifyKPI.css';
@@ -7,46 +7,54 @@ const VerifyKPI = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     category: '',
-    verificationStatus: '', // Changed from 'verifyStatus' to 'verificationStatus'
-    department: '',
+    department: '', // Removed verificationStatus filter
   });
 
-  // Create KPI summaries per staff
-  const staffSummaries = getStaffKpiCount(dummyKPIs).map((staff) => {
-    const kpis = dummyKPIs.filter(kpi => kpi.assignedTo.staffId === staff.staffId);
-    const categories = [...new Set(kpis.map(kpi => kpi.category))];
+  const [kpis, setKpis] = useState(dummyKPIs);
+  const [selectedKPI, setSelectedKPI] = useState(null);
+  const dialogRef = useRef();
 
-    // Check if any KPI is submitted
-    const hasSubmitted = kpis.some(kpi => kpi.submitted === true);
-
-    return {
-      id: staff.staffId,
-      name: staff.name,
-      department: staff.department,
-      category: categories.length === 1 ? categories[0] : 'Multiple',
-      kpiCount: staff.kpiCount,
-      verificationStatus: hasSubmitted ? 'Need Approval' : 'In Progress' // Adjusted verification status
-    };
-  });
-
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
+  const openDetails = (kpi) => {
+    setSelectedKPI(kpi);
+    dialogRef.current?.showModal();
   };
 
-  const filteredData = staffSummaries.filter((item) => {
+  const updateStatus = (id, newStatus) => {
+    // Update the KPI's status and verification status
+    const updatedKPIs = kpis.map(kpi => {
+      if (kpi.id === id) {
+        return {
+          ...kpi,
+          status: newStatus,
+          verifyStatus: newStatus === 'Accepted' ? 'Accepted' : 'Rejected',
+        };
+      }
+      return kpi;
+    });
+
+    // Update the state with the modified KPIs
+    setKpis(updatedKPIs);
+
+    // Close the modal after the action
+    dialogRef.current?.close();
+  };
+
+  // Filter for KPIs that need approval (submitted: true and verifyStatus: "Pending")
+  const pendingKpis = kpis.filter(kpi => kpi.submitted === true && kpi.verifyStatus === 'Pending');
+
+  // Apply search and other filters
+  const filteredData = pendingKpis.filter((item) => {
     return (
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      item.assignedTo.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (filters.category ? item.category === filters.category : true) &&
-      (filters.verificationStatus ? item.verificationStatus === filters.verificationStatus : true) &&
-      (filters.department ? item.department === filters.department : true)
+      (filters.department ? item.assignedTo.department === filters.department : true)
     );
   });
 
   return (
     <div className="container">
       <h2 className="heading">Verify KPI</h2>
-      <p className="description">Verify the evidence submitted by a staff</p>
+      <p className="description">Verify the evidence submitted by staff</p>
 
       {/* Search and Filter Controls */}
       <div className="filter-section">
@@ -60,20 +68,14 @@ const VerifyKPI = () => {
         </div>
 
         <div className="filter-controls">
-          <select name="category" value={filters.category} onChange={handleFilterChange}>
+          <select name="category" value={filters.category} onChange={(e) => setFilters({ ...filters, category: e.target.value })}>
             <option value="">All Categories</option>
             <option value="Documentation">Documentation</option>
             <option value="Performance">Performance</option>
             <option value="Compliance">Compliance</option>
           </select>
 
-          <select name="verificationStatus" value={filters.verificationStatus} onChange={handleFilterChange}> {/* Changed to 'verificationStatus' */}
-            <option value="">All Verification Statuses</option>
-            <option value="Need Approval">Need Approval</option>
-            <option value="In Progress">In Progress</option>
-          </select>
-
-          <select name="department" value={filters.department} onChange={handleFilterChange}>
+          <select name="department" value={filters.department} onChange={(e) => setFilters({ ...filters, department: e.target.value })}>
             <option value="">All Departments</option>
             <option value="HR">HR</option>
             <option value="IT">IT</option>
@@ -88,42 +90,84 @@ const VerifyKPI = () => {
         <thead>
           <tr>
             <th>No</th>
+            <th>KPI ID</th>
             <th>Staff Name</th>
             <th>Department</th>
             <th>Category</th>
-            <th>No. of KPIs</th>
-            <th>Verification Status</th> {/* Changed label to 'Verification Status' */}
+            <th>Verification Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {filteredData.length > 0 ? (
-            filteredData.map((staff, index) => (
-              <tr key={staff.id}>
+            filteredData.map((kpi, index) => (
+              <tr key={kpi.id}>
                 <td>{index + 1}</td>
-                <td>{staff.name}</td>
-                <td>{staff.department}</td>
-                <td>{staff.category}</td>
-                <td>{staff.kpiCount}</td>
+                <td>{kpi.id}</td>
+                <td>{kpi.assignedTo.name}</td>
+                <td>{kpi.assignedTo.department}</td>
+                <td>{kpi.category}</td>
                 <td>
-                  <span className={`status-badge ${staff.verificationStatus === 'Need Approval' ? 'need-approval' : 'in-progress'}`}>
-                    {staff.verificationStatus} {/* Shows 'Need Approval' or 'In Progress' */}
+                  <span className={`status-badge ${kpi.verifyStatus === 'Pending' ? 'need-approval' : 'in-progress'}`}>
+                    {kpi.verifyStatus}
                   </span>
                 </td>
                 <td>
-                  <Link to={`/kpi-details/${staff.id}`}>
-                    <button className="view-btn">View KPIs</button>
-                  </Link>
+                  <button className="view-btn" onClick={() => openDetails(kpi)}>Verify KPI</button>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
               <td colSpan="7">No results found.</td>
-            </tr> 
+            </tr>
           )}
         </tbody>
       </table>
+
+      {/* Modal for KPI Details */}
+      <dialog ref={dialogRef} className="modal-dialog">
+        {selectedKPI && (
+          <div>
+            <h3>{selectedKPI.title}</h3>
+            <p><strong>Description:</strong> {selectedKPI.description}</p>
+            <p><strong>Category:</strong> {selectedKPI.category}</p>
+            <p><strong>Priority:</strong> {selectedKPI.priority}</p>
+            <p><strong>Due Date:</strong> {selectedKPI.dueDate}</p>
+
+            <p><strong>Status:</strong> {selectedKPI.status}</p>
+            <p><strong>Verification Status:</strong> {selectedKPI.verifyStatus}</p>
+
+            {selectedKPI.evidence ? (
+              <div className="evidence-section">
+                <p><strong>Evidence:</strong> {selectedKPI.evidence.split('/').pop()}</p>
+                <a href={selectedKPI.evidence} download className="download-btn">Download</a>
+              </div>
+            ) : (
+              <p className="text-gray-400 italic text-sm">No evidence uploaded.</p>
+            )}
+
+            <div className="comment-section">
+              <label htmlFor="comment"><strong>Final Comment:</strong></label>
+              <textarea
+                id="comment"
+                rows="3"
+                value={selectedKPI.comments || ''}
+                onChange={(e) =>
+                  setSelectedKPI({ ...selectedKPI, comments: e.target.value })
+                }
+                placeholder="Write final remark before approval/rejection..."
+              />
+            </div>
+
+            <div className="actions">
+              <button onClick={() => updateStatus(selectedKPI.id, 'Accepted')} className="accept">Accept</button>
+              <button onClick={() => updateStatus(selectedKPI.id, 'Rejected')} className="reject">Reject</button>
+              <button onClick={() => dialogRef.current?.close()} className="back-button">Close</button>
+            </div>
+          </div>
+        )}
+      </dialog>
     </div>
   );
 };

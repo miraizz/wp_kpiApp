@@ -1,113 +1,208 @@
-  .container {
-    padding: 24px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
 
-  .heading {
-    color: #0b5c66;
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 0;
-    text-align: left;
-  }
+/* Make sure the container fills the available space, but doesn't overlap the footer */
+.container {
+  min-height: calc(100vh - 60px); /* Adjust based on the footer height */
+  padding: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+  padding-bottom: 60px; /* Provide space for the footer */
+}
 
-  .description {
-    font-size: 1rem;
-    color: #555;
-    text-align: left;
-    max-width: 100%;
-    margin-bottom: 20px;
-  }
-  
 
-  .filter-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-  
-  .search-bar {
-    flex: 1;
-    max-width: 250px;
-  }
-  
-  .filter-controls {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  
-  .search-bar input,
-  .filter-controls select {
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    background-color: #f8fafc;
-  }
-  
-  /* Table with header color */
-  .kpi-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    border: 1px solid #0F5D6C;
-  }
-  
-  .kpi-table th,
-  .kpi-table td {
-    padding: 12px;
-    border: 1px solid #c1e4eb;
-    text-align: left;
-  }
-  
-  .kpi-table th {
-    background-color: #A1D6E2;
-    color: #1e293b;
-    font-weight: 600;
-  }
-  
-  .kpi-table tr:hover {
-    background-color: #eaf7fa;
-  }
-  
-  .view-btn {
-    background-color: #0F5D6C;
-    color: #1e293b;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .view-btn:hover {
-    background-color: #0F5D6C;
-    color: #1e293b;
-  }
-  
-  
-  .status-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 12px;
-    display: inline-block;
-  }
-  
-  .status-badge.in-progress {
-    background-color: #fef9c3;
-    color: #92400e;
-  }
+/* General page and table styles */
+.heading {
+  color: #0b5c66;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 0;
+  text-align: left;
+}
 
-  
-  .status-badge.need-approval {
-    background-color: #fee2e2;
-    color: #b91c1c;
-  }
-  
+.description {
+  font-size: 1rem;
+  color: #555;
+  text-align: left;
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+
+.filter-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  flex: 1;
+  max-width: 250px;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.search-bar input,
+.filter-controls select {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #f8fafc;
+}
+
+/* Table with header color */
+.kpi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border: 1px solid #0F5D6C;
+}
+
+.kpi-table th,
+.kpi-table td {
+  padding: 12px;
+  border: 1px solid #c1e4eb;
+  text-align: left;
+}
+
+.kpi-table th {
+  background-color: #A1D6E2;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.kpi-table tr:hover {
+  background-color: #eaf7fa;
+}
+
+.view-btn {
+  background-color: #0F5D6C;
+  color: #1e293b;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.view-btn:hover {
+  background-color: #0F5D6C;
+  color: #1e293b;
+}
+
+/* Status Badge styles */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.status-badge.in-progress {
+  background-color: #fef9c3;
+  color: #92400e;
+}
+
+.status-badge.need-approval {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Modal Styles */
+.modal-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  border: 1px solid #ccc;
+  background-color: white;
+  z-index: 9999;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.evidence-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.download-btn {
+  background-color: #0F5D6C;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.comment-section {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-section textarea {
+  margin-top: 6px;
+  resize: vertical;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.actions .accept {
+  background-color: #22c55e;
+}
+
+.actions .reject {
+  background-color: #ef4444;
+}
+
+.actions .accept:hover {
+  background-color: #16a34a;
+}
+
+.actions .reject:hover {
+  background-color: #dc2626;
+}
+
+.back-button {
+  background-color: #e5e7eb;
+  color: #333;
+  margin-left: auto;
+}
+
+.back-button:hover {
+  background-color: #d1d5db;
+}
