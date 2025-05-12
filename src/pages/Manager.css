@@ -234,8 +234,9 @@
    Team Panel
 =================== */
 .team-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 1.5rem;
   width: 100%;
 }
 
