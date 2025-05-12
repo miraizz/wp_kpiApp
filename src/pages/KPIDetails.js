@@ -27,20 +27,30 @@ export default function KPIDetails() {
     dialogRef.current?.close();
   };
 
-  const filteredKPIs = filter === 'All' ? kpis : kpis.filter(kpi => kpi.status === filter);
+  // Modify the filter to allow filtering based on specific statuses
+  const filteredKPIs = filter === 'All' 
+    ? kpis 
+    : kpis.filter(kpi => {
+        if (filter === 'In Progress') return !kpi.submitted;
+        if (filter === 'Need Approval') return kpi.submitted && kpi.verifyStatus === 'Pending';
+        if (filter === 'Accepted') return kpi.verifyStatus === 'Accepted';
+        if (filter === 'Rejected') return kpi.verifyStatus === 'Rejected';
+        return true;
+      });
 
   return (
     <div className="page-container">
       <div className="details-container">
         <h2 className="heading">Assigned KPIs</h2>
 
+        {/* Filter Bar - Positioned to the left with dropdown */}
         <div className="filter-bar">
-          <label>Status Filter:</label>
           <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-            <option>All</option>
-            <option>Pending</option>
-            <option>Accepted</option>
-            <option>Rejected</option>
+            <option value="All">All</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Need Approval">Need Approval</option>
+            <option value="Accepted">Accepted</option>
+            <option value="Rejected">Rejected</option>
           </select>
         </div>
 
@@ -49,8 +59,11 @@ export default function KPIDetails() {
             <div key={kpi.id} className="kpi-detail-box">
               <h4>{kpi.title}</h4>
               <p><strong>Due Date:</strong> {kpi.dueDate}</p>
+              <p className={`status-badge ${kpi.submitted ? 'need-approval' : 'in-progress'}`}>
+                {kpi.submitted ? '⚠ Need Approval' : 'In Progress'} {/* Show "Need Approval" or "In Progress" based on submission */}
+              </p>
               <p className={`status-badge ${kpi.status.toLowerCase()}`}>
-                {kpi.status === 'Pending' ? '⚠ Pending Verification' : kpi.status}
+                {kpi.status} {/* Show the current status */}
               </p>
               <button className="view-btn" onClick={() => openDetails(kpi)}>View Details</button>
             </div>
@@ -67,6 +80,9 @@ export default function KPIDetails() {
             <p><strong>Category:</strong> {selectedKPI.category}</p>
             <p><strong>Priority:</strong> {selectedKPI.priority}</p>
             <p><strong>Due Date:</strong> {selectedKPI.dueDate}</p>
+
+            <p><strong>Status:</strong> {selectedKPI.status}</p> {/* Show status */}
+            <p><strong>Verification Status:</strong> {selectedKPI.submitted ? 'Need Approval' : 'In Progress'}</p> {/* Show verification status */}
 
             {selectedKPI.evidence ? (
               <div className="evidence-section">

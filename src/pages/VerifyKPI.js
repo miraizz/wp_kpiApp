@@ -7,7 +7,7 @@ const VerifyKPI = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     category: '',
-    status: '',
+    verificationStatus: '', // Changed from 'verifyStatus' to 'verificationStatus'
     department: '',
   });
 
@@ -15,7 +15,9 @@ const VerifyKPI = () => {
   const staffSummaries = getStaffKpiCount(dummyKPIs).map((staff) => {
     const kpis = dummyKPIs.filter(kpi => kpi.assignedTo.staffId === staff.staffId);
     const categories = [...new Set(kpis.map(kpi => kpi.category))];
-    const hasPending = kpis.some(kpi => kpi.status === 'Pending');
+
+    // Check if any KPI is submitted
+    const hasSubmitted = kpis.some(kpi => kpi.submitted === true);
 
     return {
       id: staff.staffId,
@@ -23,7 +25,7 @@ const VerifyKPI = () => {
       department: staff.department,
       category: categories.length === 1 ? categories[0] : 'Multiple',
       kpiCount: staff.kpiCount,
-      status: hasPending ? 'Need Approval' : 'Completed'
+      verificationStatus: hasSubmitted ? 'Need Approval' : 'In Progress' // Adjusted verification status
     };
   });
 
@@ -36,7 +38,7 @@ const VerifyKPI = () => {
     return (
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (filters.category ? item.category === filters.category : true) &&
-      (filters.status ? item.status === filters.status : true) &&
+      (filters.verificationStatus ? item.verificationStatus === filters.verificationStatus : true) &&
       (filters.department ? item.department === filters.department : true)
     );
   });
@@ -65,10 +67,10 @@ const VerifyKPI = () => {
             <option value="Compliance">Compliance</option>
           </select>
 
-          <select name="status" value={filters.status} onChange={handleFilterChange}>
-            <option value="">All Statuses</option>
+          <select name="verificationStatus" value={filters.verificationStatus} onChange={handleFilterChange}> {/* Changed to 'verificationStatus' */}
+            <option value="">All Verification Statuses</option>
             <option value="Need Approval">Need Approval</option>
-            <option value="Completed">Completed</option>
+            <option value="In Progress">In Progress</option>
           </select>
 
           <select name="department" value={filters.department} onChange={handleFilterChange}>
@@ -90,7 +92,7 @@ const VerifyKPI = () => {
             <th>Department</th>
             <th>Category</th>
             <th>No. of KPIs</th>
-            <th>Status</th>
+            <th>Verification Status</th> {/* Changed label to 'Verification Status' */}
             <th>Action</th>
           </tr>
         </thead>
@@ -104,8 +106,8 @@ const VerifyKPI = () => {
                 <td>{staff.category}</td>
                 <td>{staff.kpiCount}</td>
                 <td>
-                  <span className={`status-badge ${staff.status === 'Completed' ? 'completed' : 'need-approval'}`}>
-                    {staff.status}
+                  <span className={`status-badge ${staff.verificationStatus === 'Need Approval' ? 'need-approval' : 'in-progress'}`}>
+                    {staff.verificationStatus} {/* Shows 'Need Approval' or 'In Progress' */}
                   </span>
                 </td>
                 <td>

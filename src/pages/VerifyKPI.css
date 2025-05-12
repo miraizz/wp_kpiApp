@@ -100,10 +100,11 @@
     display: inline-block;
   }
   
-  .status-badge.completed {
-    background-color: #dcfce7;
-    color: #15803d;
+  .status-badge.in-progress {
+    background-color: #fef9c3;
+    color: #92400e;
   }
+
   
   .status-badge.need-approval {
     background-color: #fee2e2;
