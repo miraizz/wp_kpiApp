@@ -31,7 +31,7 @@ const Manager = () => {
       </div>
 
       <div className="tabs">
-        {['Overview', 'Analytics', 'Team', 'All KPIs'].map((tab) => (
+        {['Overview', 'Team', 'All KPIs'].map((tab) => (
           <button
             key={tab}
             className={`tab-button ${activeTab === tab ? 'active' : ''}`}

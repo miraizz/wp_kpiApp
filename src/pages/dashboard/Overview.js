@@ -12,24 +12,52 @@ import {
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import '../Manager.css';
+import { dummyKPIs } from '../../data/dummyKPIs';
 
-ChartJS.register(ChartDataLabels);
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
+ChartJS.register(ChartDataLabels, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
 const Overview = () => {
-    const teamData = [
-        { name: 'John', completion: 80 },
-        { name: 'Alice', completion: 90 },
-        { name: 'Bob', completion: 70 },
-        { name: 'David', completion: 85 },
-    ];
+    // Extract staff-level metrics
+    const staffMap = {};
+    dummyKPIs.forEach(kpi => {
+        const { staffId, name } = kpi.assignedTo;
+        if (!staffMap[staffId]) {
+            staffMap[staffId] = { name, totalProgress: 0, count: 0 };
+        }
+        staffMap[staffId].totalProgress += parseInt(kpi.progress);
+        staffMap[staffId].count += 1;
+    });
+
+    const teamData = Object.values(staffMap).map(member => ({
+        name: member.name,
+        completion: member.count ? Math.round(member.totalProgress / member.count) : 0,
+    }));
+
+    // KPI status count for donut
+    const statusCount = { Completed: 0, Pending: 0, 'In Progress': 0 };
+    dummyKPIs.forEach(kpi => {
+        const progress = parseInt(kpi.progress);
+        if (progress === 100) {
+            statusCount.Completed += 1;
+        } else if (progress === 0) {
+            statusCount.Pending += 1;
+        } else {
+            statusCount['In Progress'] += 1;
+        }
+    });
+
+    // Card metrics
+    const totalKPIs = dummyKPIs.length;
+    const teamMembersCount = Object.keys(staffMap).length;
+    const avgCompletion = Math.round(dummyKPIs.reduce((sum, kpi) => sum + parseInt(kpi.progress), 0) / totalKPIs);
+    const actionRequired = dummyKPIs.filter(kpi => kpi.status === 'Pending').length;
 
     const chartData = {
-        labels: teamData.map((member) => member.name),
+        labels: teamData.map(member => member.name),
         datasets: [
             {
-                label: 'Completion (%)',
-                data: teamData.map((member) => member.completion),
+                label: 'Average Completion (%)',
+                data: teamData.map(member => member.completion),
                 backgroundColor: 'rgba(75, 192, 192, 0.6)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1,
@@ -42,20 +70,11 @@ const Overview = () => {
         scales: {
             y: {
                 beginAtZero: true,
-                ticks: {
-                    stepSize: 25,
-                    max: 100,
-                    min: 0,
-                },
-                grid: {
-                    drawOnChartArea: false,
-                },
+                max: 100,
+                ticks: { stepSize: 25 },
+                grid: { drawOnChartArea: false },
             },
-            x: {
-                grid: {
-                    drawOnChartArea: false,
-                },
-            },
+            x: { grid: { drawOnChartArea: false } },
         },
         plugins: {
             title: { display: false },
@@ -68,9 +87,7 @@ const Overview = () => {
                     padding: 20,
                 },
             },
-            datalabels: {
-                display: false,
-            },
+            datalabels: { display: false },
         },
     };
 
@@ -78,7 +95,11 @@ const Overview = () => {
         labels: ['Completed', 'Pending', 'In Progress'],
         datasets: [
             {
-                data: [13, 13, 75],
+                data: [
+                    statusCount.Completed,
+                    statusCount.Pending,
+                    statusCount['In Progress'],
+                ],
                 backgroundColor: ['#FFB347', '#77DD77', '#84B6F4'],
                 hoverOffset: 6,
             },
@@ -89,9 +110,7 @@ const Overview = () => {
         responsive: true,
         cutout: '60%',
         plugins: {
-            legend: {
-                position: 'bottom',
-            },
+            legend: { position: 'bottom' },
             datalabels: {
                 color: '#ffffff',
                 formatter: (value, context) => {
@@ -99,10 +118,7 @@ const Overview = () => {
                     const percentage = ((value / total) * 100).toFixed(0);
                     return `${percentage}%`;
                 },
-                font: {
-                    weight: 'bold',
-                    size: 14,
-                },
+                font: { weight: 'bold', size: 14 },
             },
         },
     };
@@ -110,25 +126,25 @@ const Overview = () => {
     return (
         <div className="overview-page">
             <div className="manager-cards-container">
-                <div className="card">
-                    <h3 className="card-name">Team Members</h3>
-                    <div className="card-number">4</div>
-                    <p className="card-description">Staff with active KPIs</p>
+                <div className="aliff-card">
+                    <h3 className="manager-card-name">Team Members</h3>
+                    <div className="manager-card-number">{teamMembersCount}</div>
+                    <p className="manager-card-description">Staff with active KPIs</p>
                 </div>
-                <div className="card">
-                    <h3 className="card-name">Total KPIs</h3>
-                    <div className="card-number">8</div>
-                    <p className="card-description">Across all team members</p>
+                <div className="aliff-card">
+                    <h3 className="manager-card-name">Total KPIs</h3>
+                    <div className="manager-card-number">{totalKPIs}</div>
+                    <p className="manager-card-description">Across all team members</p>
                 </div>
-                <div className="card">
-                    <h3 className="card-name">Average Completion</h3>
-                    <div className="card-number">86%</div>
-                    <p className="card-description">Team average performance</p>
+                <div className="aliff-card">
+                    <h3 className="manager-card-name">Average Completion</h3>
+                    <div className="manager-card-number">{avgCompletion}%</div>
+                    <p className="manager-card-description">Team average performance</p>
                 </div>
-                <div className="card">
-                    <h3 className="card-name">Action Required</h3>
-                    <div className="card-number">1</div>
-                    <p className="card-description">KPIs pending review</p>
+                <div className="aliff-card">
+                    <h3 className="manager-card-name">Action Required</h3>
+                    <div className="manager-card-number">{actionRequired}</div>
+                    <p className="manager-card-description">KPIs pending review</p>
                 </div>
             </div>
 

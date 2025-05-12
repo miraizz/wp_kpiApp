@@ -11,13 +11,13 @@ const AllKPIs = () => {
 
   return (
     <div className="all-kpis-container">
-      <div className="search-bar-container">
+      <div className="aliff-search-bar-container">
         <input
           type="text"
           placeholder="Search KPIs by title or description"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="search-bar"
+          className="aliff-search-bar"
         />
       </div>
 

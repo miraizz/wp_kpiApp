@@ -75,22 +75,20 @@
     margin-bottom: 20px;
 }
 
-.card-name {
+.manager-card-name {
     font-size: 16px;
     color: #000;
 }
 
-.card-number {
+.manager-card-number {
     font-size: 30px;
     font-weight: 700;
     color: #000;
-    margin-top: 0.5rem;
 }
 
-.card-description {
+.manager-card-description {
     font-size: 12px;
     color: #6b7280;
-    margin-top: 0.5rem;
 }
 
 /* ===================
@@ -217,12 +215,12 @@
 /* ===================
    Search Bar
 =================== */
-.search-bar-container {
+.aliff-search-bar-container {
     width: 100%;
     margin-bottom: 1.5rem;
 }
 
-.search-bar {
+.aliff-search-bar {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #ccc;
@@ -236,8 +234,9 @@
    Team Panel
 =================== */
 .team-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 1.5rem;
   width: 100%;
 }
 
@@ -314,6 +313,16 @@
 .kpi-count {
     font-size: 0.875rem;
     color: #666;
+}
+
+.aliff-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
 }
 
 /* ===================
