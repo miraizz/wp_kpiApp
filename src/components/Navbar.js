@@ -58,7 +58,7 @@ const Navbar = () => {
       <nav className="navbar">
         <div className="navbar-container">
           <Link to="/" className="navbar-brand">
-            <h1>{user ? 'KPI Management System' : 'KPIHub'}</h1>
+            <h1>KPIHub</h1>
           </Link>
 
           {/* Hamburger menu */}
