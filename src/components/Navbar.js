@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Notification from './Notifications';
 import './Navbar.css';
@@ -6,9 +7,11 @@ import './Navbar.css';
 const Navbar = () => {
   const user = sessionStorage.getItem('user');
   const role = sessionStorage.getItem('role');
+  const role = sessionStorage.getItem('role');
   const [isOpen, setIsOpen] = useState(false);
   const [notification, setNotification] = useState('');
   const [profileOpen, setProfileOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -65,8 +68,9 @@ const Navbar = () => {
           <button
             className={`hamburger ${isOpen ? 'open' : ''}`}
             onClick={() => setIsOpen(!isOpen)}
-            aria-label="Menu"
+            aria-label="Toggle menu"
           >
+            <span></span><span></span><span></span>
             <span></span><span></span><span></span>
           </button>
 
@@ -100,8 +104,10 @@ const Navbar = () => {
                   <span className="profile-email">{user}</span>
                 </div>
                 {profileOpen && (
-                  <div className="dropdown-menu">
-                    <Link to="/profile" onClick={() => setProfileOpen(false)}>Profile Settings</Link>
+                  <div className="nav-dropdown-menu">
+                    <Link to="/profile" onClick={() => setProfileOpen(false)}>
+                      Profile Settings
+                    </Link>
                     <button onClick={handleLogout}>Logout</button>
                   </div>
                 )}
@@ -138,6 +144,9 @@ const Navbar = () => {
         )}
 
         {!user && (
+        )}
+
+        {!user && (
           <>
             <Link to="/login" onClick={() => setIsOpen(false)}>Log In</Link>
             <Link to="/signup" onClick={() => setIsOpen(false)}>Sign Up</Link>
@@ -149,3 +158,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
