@@ -38,6 +38,7 @@ function App() {
           <Route path="/verify-kpi/:staffId" element={<KPIDetails />} />
           <Route path="/staff" element={<Staff />} />
           <Route path="/kpi-management" element={<KPIManagement />} />
+          
         </Routes>
 
         <Footer />

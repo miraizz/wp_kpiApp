@@ -1,4 +1,3 @@
-
 .profile-container {
   max-width: 800px;
   margin: 30px auto;
@@ -6,39 +5,40 @@
   background: #fff;
 }
 
-.tab-buttons {
+.profile-tab-buttons {
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
 }
 
-.tab-buttons button {
+.profile-tab-buttons button {
   padding: 10px 16px;
   border: 1px solid #ccc;
   background: #f5f5f5;
   cursor: pointer;
   border-radius: 6px;
+  color:black
 }
 
-.tab-buttons .active {
+.profile-tab-buttons .active {
   background: white;
   border-bottom: 3px solid teal;
   font-weight: bold;
 }
 
-.card {
+.profile-card {
   background: #f9f9f9;
   border: 1px solid #ddd;
   padding: 25px;
   border-radius: 8px;
 }
 
-.card.danger {
+.profile-card.danger {
   border: 1px solid #faa;
   background: #fff5f5;
 }
 
-.avatar {
+.profile-avatar {
   width: 60px;
   height: 60px;
   background: teal;
@@ -50,7 +50,7 @@
   margin-bottom: 10px;
 }
 
-.card input {
+.profile-card input {
   display: block;
   width: 100%;
   padding: 10px;
@@ -59,7 +59,7 @@
   border-radius: 6px;
 }
 
-.card button {
+.profile-card button {
   padding: 10px 20px;
   background-color: teal;
   color: white;
@@ -68,11 +68,23 @@
   cursor: pointer;
 }
 
-.card .danger-btn {
-  background-color: #d9534f;
+.profile-danger-btn {
+  background-color: #d9534f !important; /* Bootstrap-like red */
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.warning {
+.profile-danger-btn:hover {
+  background-color: #c9302c !important;
+}
+
+.profile-warning {
   background: #ffe6e6;
   color: #a94442;
   padding: 12px;
@@ -81,7 +93,7 @@
   border-radius: 4px;
 }
 
-.card label {
+.profile-card label {
   display: block;
   margin-top: 5px;
   font-weight: 500;
