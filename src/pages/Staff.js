@@ -27,6 +27,7 @@ function Staff() {
       comments: [] // Initialize comments array for each KPI
     };
   }));
+  
   const [selectedKpi, setSelectedKpi] = useState(null);
   const [selectedKpiIndex, setSelectedKpiIndex] = useState(null);
   const [activeEvidenceIndex, setActiveEvidenceIndex] = useState(null);
@@ -172,11 +173,20 @@ function Staff() {
 
   // Filter and display KPIs
   let filteredKpis = kpis.map(kpi => {
+    // Add "Verified" to title for verified KPIs
+    let updatedKpi = { ...kpi };
+    
     // Ensure status reflects 100% progress
     if (kpi.progress === 100 && kpi.status !== 'Completed') {
-      return { ...kpi, status: 'Completed' };
+      updatedKpi.status = 'Completed';
     }
-    return kpi;
+    
+    // Add "Verified" to title for verified KPIs
+    if (kpi.verifyStatus === "Accepted") {
+      updatedKpi.title = updatedKpi.title + " Verified";
+    }
+    
+    return updatedKpi;
   }).filter(kpi => {
     // Update filter conditions to include Incomplete and Verified
     const matchesFilter = filterStatus === "All"
@@ -206,64 +216,52 @@ function Staff() {
   const verified = kpis.filter(k => k.verifyStatus === "Accepted").length;
 
   return (
-    <div className="container mt-4">
-      <h3>My KPI</h3>
+    <div className="staff-container">
+      <h3 className="staff-heading">My KPI</h3>
 
-      {/* KPI Stats Cards - Updated with new styling and added Incomplete and Verified cards */}
-      <div className="row mb-4">
-        <div className="col-md-2 mb-3">
-          <div className="card shadow-sm p-3 text-center h-100">
-            <h6 className="mb-2">Total KPIs</h6>
-            <h3 className="mb-0 total-kpis" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>{totalKpis}</h3>
-          </div>
+      {/* KPI Stats Cards - Updated without Bootstrap */}
+      <div className="summary-cards">
+        <div className="summary-card">
+          <div className="summary-card-title">Total KPIs</div>
+          <div className="summary-card-value total-kpis">{totalKpis}</div>
         </div>
-        <div className="col-md-2 mb-3">
-          <div className="card shadow-sm p-3 text-center h-100">
-            <h6 className="mb-2">On Track</h6>
-            <h3 className="mb-0 on-track" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>{onTrack}</h3>
-          </div>
+        <div className="summary-card">
+          <div className="summary-card-title">On Track</div>
+          <div className="summary-card-value on-track">{onTrack}</div>
         </div>
-        <div className="col-md-2 mb-3">
-          <div className="card shadow-sm p-3 text-center h-100">
-            <h6 className="mb-2">Needs Attention</h6>
-            <h3 className="mb-0 at-risk" style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>{needsAttention}</h3>
-          </div>
+        <div className="summary-card">
+          <div className="summary-card-title">Needs Attention</div>
+          <div className="summary-card-value at-risk">{needsAttention}</div>
         </div>
-        <div className="col-md-2 mb-3">
-          <div className="card shadow-sm p-3 text-center h-100">
-            <h6 className="mb-2">Completed</h6>
-            <h3 className="mb-0 completed-kpi" style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#198754' }}>{completed}</h3>
-          </div>
+        <div className="summary-card">
+          <div className="summary-card-title">Completed</div>
+          <div className="summary-card-value completed-kpi">{completed}</div>
         </div>
-        <div className="col-md-2 mb-3">
-          <div className="card shadow-sm p-3 text-center h-100">
-            <h6 className="mb-2">Incomplete</h6>
-            <h3 className="mb-0 incomplete-kpi" style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#6c757d' }}>{incomplete}</h3>
-          </div>
+        <div className="summary-card">
+          <div className="summary-card-title">Incomplete</div>
+          <div className="summary-card-value incomplete-kpi">{incomplete}</div>
         </div>
-        <div className="col-md-2 mb-3">
-          <div className="card shadow-sm p-3 text-center h-100">
-            <h6 className="mb-2">Verified</h6>
-            <h3 className="mb-0 verified-kpi" style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#0dcaf0' }}>{verified}</h3>
-          </div>
+        <div className="summary-card">
+          <div className="summary-card-title">Verified</div>
+          <div className="summary-card-value verified-kpi">{verified}</div>
         </div>
       </div>
 
       {/* Search & Filter Controls */}
-      <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+      <div className="search-filters">
         <input 
           type="text" 
-          className="form-control w-50 mb-2" 
+          className="search-input" 
           placeholder="Search KPIs..." 
           value={searchQuery} 
           onChange={(e) => setSearchQuery(e.target.value)} 
         />
 
-        <div className="mb-2">
-          {["All", "On Track", "Needs Attention", "Completed", "Incomplete", "Verified"].map(status => (
+        <div className="filter-group">
+          {["All", "On Track", "Needs Attention", "Completed", "Verified"].map(status => (
             <button 
               key={status}
-              className={`btn mx-1 ${filterStatus === status ? 'btn-primary' : 'btn-outline-primary'}`}
+              className={`filter-btn ${filterStatus === status ? 'active' : ''}`}
               onClick={() => setFilterStatus(status)}
             >
               {status}
@@ -272,7 +270,7 @@ function Staff() {
         </div>
 
         <select 
-          className="form-select w-auto mb-2" 
+          className="sort-select" 
           value={sortOption} 
           onChange={(e) => setSortOption(e.target.value)}
         >
@@ -282,44 +280,47 @@ function Staff() {
         </select>
       </div>
 
-      {/* KPI List - Updated to show 2 cards per row */}
+      {/* KPI List - Using custom grid */}
       <div className="row">
         {filteredKpis.map((kpi, index) => (
-          <div className="col-md-6 mb-3" key={index}>
-            <div className="kpi-card p-3 border rounded h-100 shadow-sm">
-              <div className="d-flex justify-content-between align-items-center">
-                <h6 className="mb-0">
+          <div className="col-6" key={index}>
+            <div className="kpi-card">
+              <div className="kpi-header">
+                <h6 className="kpi-title">
                   {kpi.title}
                   {kpi.verifyStatus === "Accepted" && (
-                    <span className="verification-badge accepted">
-                      <i className="fa fa-check-circle mr-1"></i> Verified
+                    <span className="verification-badge verified">
+                      ✓ Verified
                     </span>
                   )}
                 </h6>
                 <span className={`status-chip ${kpi.progress === 100 ? 'completed' : kpi.status.replace(/ /g, '-').toLowerCase()}`}>
-                  {kpi.progress === 100 ? 'Completed' : kpi.status}
+                  {kpi.progress === 100 ? 'COMPLETED' : kpi.status.toUpperCase()}
                 </span>
               </div>
-              <p className="text-muted my-2" style={{ fontSize: '0.9rem' }}>{kpi.description}</p>
-              <div className="progress mb-2" style={{ height: '12px' }}>
-                <div 
-                  className={`progress-bar ${kpi.progress === 100 ? 'bg-success' : 'bg-info'}`} 
-                  style={{ width: `${kpi.progress}%` }}
-                >
-                  {kpi.progress}%
-                </div>
+              
+              <p className="kpi-description">{kpi.description}</p>
+              
+              <div className="progress-container">
+              <div 
+                className={`progress-bar ${kpi.progress === 100 ? 'success' : 'info'}`} 
+                style={{ width: `${kpi.progress}%`, color: '#FFFFFF' }}
+              >
+                {kpi.progress}%
               </div>
-              <div className="d-flex justify-content-between align-items-center mt-2">
-                <small className="text-muted">
+              </div>
+              
+              <div className="kpi-footer">
+                <div className="kpi-meta">
                   Due: {kpi.dueDate} | {kpi.assignedTo ? kpi.assignedTo.name : 'N/A'}
-                  {kpi.submitted && (
-                    <span className={`verification-badge ${kpi.verifyStatus.toLowerCase()}`} style={{ marginLeft: '8px' }}>
+                  {kpi.verifyStatus && (
+                    <span className={`verification-badge ${kpi.verifyStatus.toLowerCase()}`}>
                       {kpi.verifyStatus}
                     </span>
                   )}
-                </small>
+                </div>
                 <button 
-                  className="btn btn-outline-primary btn-sm" 
+                  className="btn btn-outline-primary btn-small" 
                   onClick={() => handleKpiSelection(kpi, index)}
                 >
                   View KPI
