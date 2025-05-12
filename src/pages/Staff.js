@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EvidenceUpload from '../components/EvidenceUpload';
 import ProgressUpdate from '../components/ProgressUpdate';
+import KpiDetailModal from '../components/KpiDetailModal';
 import './Staff.css';
 import { dummyKPIs } from '../data/dummyKPIs';
 
@@ -122,10 +123,14 @@ function Staff() {
           <small className="text-muted">
           Due Date: {kpi.dueDate} | Assigned To: {kpi.assignedTo ? kpi.assignedTo.name : 'N/A'}
         </small><br />
-          <button className="btn btn-outline-secondary btn-sm mt-2" onClick={() => {
-            setSelectedKpi(kpi); // Set the selected KPI
-            navigate(`/kpi/${index}`); // Navigate to the KPI details page
-          }}>View KPI</button>
+        <button 
+          className="btn btn-outline-secondary btn-sm mt-2" 
+          onClick={() => {
+            setSelectedKpi(kpi); // Open modal instead of navigating
+          }}
+        >
+          View KPI
+        </button>
 
           {/* Evidence Upload & Progress Update */}
           <EvidenceUpload
@@ -138,6 +143,18 @@ function Staff() {
             onClose={() => setActiveProgressIndex(null)}
             onSubmit={(value) => handleProgressSubmit(index, value)}
           />
+
+          <KpiDetailModal
+            show={!!selectedKpi}
+            onClose={() => setSelectedKpi(null)}
+            kpi={selectedKpi}
+            onProgressSubmit={(value) => {
+              const index = kpis.findIndex(k => k === selectedKpi);
+              handleProgressSubmit(index, value);
+              setSelectedKpi(null);
+            }}
+          />
+
         </div>
       ))}
     </div>

@@ -111,3 +111,30 @@
 .on-track { color: green; }
 .at-risk { color: orange; }
 .behind { color: red; }
+
+.status-chip {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+  }
+  
+  .status-chip.on-track {
+    background-color: #28a745; /* Green */
+  }
+  
+  .status-chip.at-risk {
+    background-color: #ffc107; /* Yellow */
+    color: #000;
+  }
+  
+  .status-chip.behind {
+    background-color: #dc3545; /* Red */
+  }
+  
+  .status-chip.completed {
+    background-color: #6c757d; /* Gray */
+  }
+  

@@ -44,3 +44,5 @@ function KPIcard({
     </div>
   );
 }
+
+export default KPIcard;
