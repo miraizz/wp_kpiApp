@@ -6,7 +6,8 @@ import './Staff.css';
 import { dummyKPIs } from '../data/dummyKPIs';
 
 function Staff() {
-  const [kpis, setKpis] = useState(dummyKPIs);  // Initialize state with dummyKPIs
+  const [kpis, setKpis] = useState(dummyKPIs); // Load dummyKPIs directly
+  const [selectedKpi, setSelectedKpi] = useState(null); // Local state for selected KPI
   const [activeEvidenceIndex, setActiveEvidenceIndex] = useState(null);
   const [activeProgressIndex, setActiveProgressIndex] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,6 +55,7 @@ function Staff() {
     <div className="container mt-4">
       <h3>My KPI</h3>
 
+      {/* KPI Stats Cards */}
       <div className="d-flex justify-content-between mb-4">
         <div className="card text-white bg-info p-3 w-100 mx-1 text-center">
           <h6>Total KPIs</h6>
@@ -73,17 +75,7 @@ function Staff() {
         </div>
       </div>
 
-      <div className="d-flex justify-content-between mb-4">
-        <div className="card text-white bg-danger p-3 w-100 mx-1 text-center">
-          <h6>Incomplete</h6>
-          <h4>{incomplete}</h4>
-        </div>
-        <div className="card text-white bg-primary p-3 w-100 mx-1 text-center">
-          <h6>Verified</h6>
-          <h4>{verified}</h4>
-        </div>
-      </div>
-
+      {/* Search & Filter Controls */}
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <input 
           type="text" 
@@ -98,7 +90,6 @@ function Staff() {
             <button 
               key={status}
               className={`btn mx-1 ${filterStatus === status ? 'btn-primary' : 'btn-outline-primary'}`}
-              style={{ borderRadius: '50px' }}
               onClick={() => setFilterStatus(status)}
             >
               {status}
@@ -117,6 +108,7 @@ function Staff() {
         </select>
       </div>
 
+      {/* KPI List */}
       {filteredKpis.map((kpi, index) => (
         <div className="kpi-card mb-3 p-3 border rounded" key={index}>
           <div className="d-flex justify-content-between">
@@ -128,13 +120,14 @@ function Staff() {
             <div className="progress-bar bg-info" style={{ width: `${kpi.progress}%` }}>{kpi.progress}%</div>
           </div>
           <small className="text-muted">
-            Due Date: {kpi.dueDate} | Assigned To: {kpi.assignedTo}
-          </small><br />
+          Due Date: {kpi.dueDate} | Assigned To: {kpi.assignedTo ? kpi.assignedTo.name : 'N/A'}
+        </small><br />
           <button className="btn btn-outline-secondary btn-sm mt-2" onClick={() => {
-            setSelectedKpi(kpi);
-            navigate(`/kpi/${index}`);
+            setSelectedKpi(kpi); // Set the selected KPI
+            navigate(`/kpi/${index}`); // Navigate to the KPI details page
           }}>View KPI</button>
 
+          {/* Evidence Upload & Progress Update */}
           <EvidenceUpload
             show={activeEvidenceIndex === index}
             onClose={() => setActiveEvidenceIndex(null)}
