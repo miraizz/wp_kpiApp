@@ -32,7 +32,7 @@ export default function KPIDetails() {
   return (
     <div className="page-container">
       <div className="details-container">
-        <h2>Assigned KPIs</h2>
+        <h2 className="heading">Assigned KPIs</h2>
 
         <div className="filter-bar">
           <label>Status Filter:</label>

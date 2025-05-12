@@ -43,7 +43,8 @@ const VerifyKPI = () => {
 
   return (
     <div className="container">
-      <h2>Verify KPI</h2>
+      <h2 className="heading">Verify KPI</h2>
+      <p className="description">Verify the evidence submitted by a staff</p>
 
       {/* Search and Filter Controls */}
       <div className="filter-section">

@@ -13,7 +13,8 @@ export const dummyKPIs = [
         startDate: "2025-07-01",
         dueDate: "2025-09-30",
         assignedTo: { name: "Afiq", staffId: "EMP-201", department: "Marketing" },
-        assignedBy: { name: "Priya Patel", managerId: "MGR-110" }
+        assignedBy: { name: "Priya Patel", managerId: "MGR-110" },
+        evidence: "/files/revenue-report.pdf"
     },
     {
         id: "KPI-2025-002",
@@ -26,7 +27,8 @@ export const dummyKPIs = [
         startDate: "2025-07-01",
         dueDate: "2025-09-15",
         assignedTo: { name: "Afiq", staffId: "EMP-201", department: "Marketing" },
-        assignedBy: { name: "Priya Patel", managerId: "MGR-110" }
+        assignedBy: { name: "Priya Patel", managerId: "MGR-110" },
+        evidence: "/files/doc-policy.pdf"
     },
     {
         id: "KPI-2025-003",
@@ -40,6 +42,7 @@ export const dummyKPIs = [
         dueDate: "2025-08-31",
         assignedTo: { name: "Afiq", staffId: "EMP-201", department: "Marketing" },
         assignedBy: { name: "Priya Patel", managerId: "MGR-110" }
+        
     },
     {
         id: "KPI-2025-004",
@@ -105,6 +108,7 @@ export const dummyKPIs = [
         dueDate: "2025-08-30",
         assignedTo: { name: "Marsya", staffId: "EMP-204", department: "IT" },
         assignedBy: { name: "Priya Patel", managerId: "MGR-110" }
+
     },
     {
         id: "KPI-2025-009",
