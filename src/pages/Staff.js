@@ -8,7 +8,7 @@ const Staff = () => {
         <h2 className="heading">Staff Dashboard</h2>
         <p className="description">Manage and track key performance indicators</p>
       </div>
-      
+
       <div className="cards-container">
         <div className="card">
           <div className="card-title total-kpis">4</div>
@@ -33,7 +33,7 @@ const Staff = () => {
 
       <div className='big-card-container'>
         <div className='big-card'>
-          
+
         </div>
       </div>
     </div>

@@ -127,24 +127,24 @@ const Overview = () => {
         <div className="overview-page">
             <div className="manager-cards-container">
                 <div className="card">
-                    <h3 className="card-name">Team Members</h3>
-                    <div className="card-number">{teamMembersCount}</div>
-                    <p className="card-description">Staff with active KPIs</p>
+                    <h3 className="manager-card-name">Team Members</h3>
+                    <div className="manager-card-number">{teamMembersCount}</div>
+                    <p className="manager-card-description">Staff with active KPIs</p>
                 </div>
                 <div className="card">
-                    <h3 className="card-name">Total KPIs</h3>
-                    <div className="card-number">{totalKPIs}</div>
-                    <p className="card-description">Across all team members</p>
+                    <h3 className="manager-card-name">Total KPIs</h3>
+                    <div className="manager-card-number">{totalKPIs}</div>
+                    <p className="manager-card-description">Across all team members</p>
                 </div>
                 <div className="card">
-                    <h3 className="card-name">Average Completion</h3>
-                    <div className="card-number">{avgCompletion}%</div>
-                    <p className="card-description">Team average performance</p>
+                    <h3 className="manager-card-name">Average Completion</h3>
+                    <div className="manager-card-number">{avgCompletion}%</div>
+                    <p className="manager-card-description">Team average performance</p>
                 </div>
                 <div className="card">
-                    <h3 className="card-name">Action Required</h3>
-                    <div className="card-number">{actionRequired}</div>
-                    <p className="card-description">KPIs pending review</p>
+                    <h3 className="manager-card-name">Action Required</h3>
+                    <div className="manager-card-number">{actionRequired}</div>
+                    <p className="manager-card-description">KPIs pending review</p>
                 </div>
             </div>
 
