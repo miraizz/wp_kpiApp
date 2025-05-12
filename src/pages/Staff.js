@@ -219,7 +219,7 @@ function Staff() {
     <div className="staff-container">
       <h3 className="staff-heading">My KPI</h3>
 
-      {/* KPI Stats Cards - Updated without Bootstrap */}
+      {/* KPI Stats Cards */}
       <div className="summary-cards">
         <div className="summary-card">
           <div className="summary-card-title">Total KPIs</div>
