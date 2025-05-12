@@ -58,7 +58,7 @@ const Profile = () => {
     <div className="profile-container">
     <Notification message={notification} onClose={() => setNotification('')} />
       <h2>User Profile</h2>
-      <div className="tab-buttons">
+      <div className="profile-tab-buttons">
         {['view', 'edit', 'password', 'deactivate'].map((tab) => (
           <button
             key={tab}
@@ -74,8 +74,11 @@ const Profile = () => {
       </div>
 
       {activeTab === 'view' && (
-        <div className="card">
-          <div className="avatar">UN</div>
+        <div className="profile-card">
+          <div className="profile-avatar">
+              {profile.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+          </div>
+
           <h3>{profile.name}</h3>
           <p>{profile.role}</p>
           <div className="details">
@@ -88,7 +91,7 @@ const Profile = () => {
       )}
 
       {activeTab === 'edit' && (
-        <div className="card">
+        <div className="profile-card">
             <h3>Edit Profile</h3>
             <p>Update your personal information.</p>
 
@@ -113,7 +116,7 @@ const Profile = () => {
 
 
     {activeTab === 'password' && (
-        <div className="card">
+        <div className="profile-card">
             <h3>Change Password</h3>
             <p>Update your account password.</p>
 
@@ -153,14 +156,14 @@ const Profile = () => {
 
 
       {activeTab === 'deactivate' && (
-        <div className="card danger">
+        <div className="profile-card danger">
           <h3>Deactivate Account</h3>
           <p>This will deactivate your account and remove your data from the system.</p>
-          <div className="warning">
+          <div className="profile-warning">
             <strong>Warning</strong><br />
             This action cannot be undone. This will permanently deactivate your account and remove your data from our servers.
           </div>
-          <button className="danger-btn" onClick={handleDeactivate}>Deactivate Account</button>
+          <button className="profile-danger-btn" onClick={handleDeactivate}>Deactivate Account</button>
         </div>
       )}
     </div>

@@ -1,176 +1,241 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { dummyKPIs } from '../data/dummyKPIs';
+import './KPIManagement.css';
 
-const KpiManagement = () => {
-  const [kpis, setKpis] = useState([
-    {
-      title: 'Update Website',
-      desc: 'Ensure the company site is updated',
-      target: 90,
-      staff: 'Marsya',
-      dept: 'IT Department',
-    },
-    {
-      title: 'Recruit Staff',
-      desc: 'Hire 3 new developers',
-      target: 70,
-      staff: 'Amira',
-      dept: 'HR Department',
-    },
-    {
-      title: 'Submit Q2 Budget',
-      desc: 'Prepare and submit Q2 financial forecast',
-      target: 60,
-      staff: 'Firzanah',
-      dept: 'Finance Department',
-    },
-  ]);
-
+const KPIManagement = () => {
+  const [kpis, setKpis] = useState(dummyKPIs);
   const [filterDept, setFilterDept] = useState('all');
-  const [sortCol, setSortCol] = useState(null);
-
   const [formData, setFormData] = useState({
-    title: '',
-    desc: '',
-    target: '',
-    staff: '',
-    dept: '',
+    title: '', description: '', staffId: '', staffName: '', department: '',
+    managerName: '', managerId: '', startDate: '', endDate: '', category: '', priority: ''
   });
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [detailsId, setDetailsId] = useState(null);
+
+  const openForm = (edit = false, id = null) => {
+    if (edit) {
+      const kpi = kpis.find(k => k.id === id);
+      setFormData({
+        title: kpi.title, description: kpi.description, staffId: kpi.assignedTo.staffId,
+        staffName: kpi.assignedTo.name, department: kpi.assignedTo.department,
+        managerName: kpi.assignedBy.name, managerId: kpi.assignedBy.managerId,
+        startDate: kpi.startDate, endDate: kpi.dueDate, category: kpi.category, priority: kpi.priority
+      });
+      setEditId(id);
+      setIsEditMode(true);
+    } else {
+      setFormData({
+        title: '', description: '', staffId: '', staffName: '', department: '',
+        managerName: '', managerId: '', startDate: '', endDate: '', category: '', priority: ''
+      });
+      setIsEditMode(false);
+      setEditId(null);
+    }
+    setIsPopupOpen(true);
+  };
 
   const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { title, desc, target, staff, dept } = formData;
-
-    if (!title || !desc || !target || !staff || !dept) {
-      alert('Please fill in all fields.');
-      return;
+    if (isEditMode) {
+      setKpis(prev =>
+        prev.map(kpi => kpi.id === editId
+          ? {
+              ...kpi,
+              title: formData.title,
+              description: formData.description,
+              category: formData.category,
+              priority: formData.priority,
+              startDate: formData.startDate,
+              dueDate: formData.endDate,
+              assignedTo: {
+                name: formData.staffName,
+                staffId: formData.staffId,
+                department: formData.department
+              },
+              assignedBy: {
+                name: formData.managerName,
+                managerId: formData.managerId
+              }
+            }
+          : kpi
+        )
+      );
+    } else {
+      const newKPI = {
+        id: `KPI-${Date.now()}`,
+        title: formData.title,
+        description: formData.description,
+        category: formData.category,
+        priority: formData.priority,
+        startDate: formData.startDate,
+        dueDate: formData.endDate,
+        status: 'Pending',
+        progress: '0',
+        assignedTo: {
+          name: formData.staffName,
+          staffId: formData.staffId,
+          department: formData.department
+        },
+        assignedBy: {
+          name: formData.managerName,
+          managerId: formData.managerId
+        }
+      };
+      setKpis([...kpis, newKPI]);
     }
-
-    setKpis(prev => [...prev, { ...formData, target: Number(target) }]);
-    setFormData({ title: '', desc: '', target: '', staff: '', dept: '' });
+    setIsPopupOpen(false);
   };
 
-  const filteredKpis = kpis.filter(kpi =>
-    filterDept === 'all' ? true : kpi.dept === filterDept
-  );
-
-  const handleSort = (col) => {
-    const sorted = [...filteredKpis].sort((a, b) => {
-      const valA = a[col].toString().toLowerCase();
-      const valB = b[col].toString().toLowerCase();
-      return isNaN(valA) ? valA.localeCompare(valB) : valA - valB;
-    });
-    setKpis(sorted);
-    setSortCol(col);
+  const handleDelete = (id) => {
+    if (window.confirm('Delete this KPI?')) {
+      setKpis(prev => prev.filter(kpi => kpi.id !== id));
+    }
   };
+
+  const renderBadge = (priority) => {
+    let className = 'status-badge ';
+    if (priority === 'High') className += 'high';
+    else if (priority === 'Medium') className += 'medium';
+    else className += 'low';
+    return <span className={className}>{priority}</span>;
+  };
+
+  const filteredKPIs = kpis.filter(kpi => {
+    return filterDept === 'all' || kpi.assignedTo.department === filterDept;
+  });
 
   return (
-    <div className="section">
-      <h2>KPI Management</h2>
-      <p>View, add, update, and delete key performance indicators with ease.</p>
+    <div className="container">
+      <h2 className="heading">KPI Management</h2>
+      <p className="description">View, assign, update, and delete key performance indicators.</p>
 
-      <form onSubmit={handleSubmit} style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'left' }}>
-        <label htmlFor="title">KPI Title:</label><br />
-        <input type="text" name="title" value={formData.title} onChange={handleChange} style={inputStyle} /><br />
-
-        <label htmlFor="desc">Description:</label><br />
-        <textarea name="desc" value={formData.desc} onChange={handleChange} rows="3" style={inputStyle}></textarea><br />
-
-        <label htmlFor="target">Target Value:</label><br />
-        <input type="number" name="target" value={formData.target} onChange={handleChange} style={inputStyle} /><br />
-
-        <label htmlFor="staff">Staff Name:</label><br />
-        <input type="text" name="staff" value={formData.staff} onChange={handleChange} style={inputStyle} /><br />
-
-        <label htmlFor="dept">Department:</label><br />
-        <input type="text" name="dept" value={formData.dept} onChange={handleChange} style={inputStyle} /><br />
-
-        <button type="submit" style={btnPrimary}>Add KPI</button>
-        <button type="reset" style={btnSecondary} onClick={() => setFormData({ title: '', desc: '', target: '', staff: '', dept: '' })}>Clear</button>
-      </form>
-
-      <div style={{ marginTop: '40px', textAlign: 'right' }}>
-        <label htmlFor="departmentFilter">Filter by Department:</label>
-        <select id="departmentFilter" onChange={(e) => setFilterDept(e.target.value)} value={filterDept}>
-          <option value="all">All</option>
-          <option value="IT Department">IT Department</option>
-          <option value="HR Department">HR Department</option>
-          <option value="Finance Department">Finance Department</option>
+      <div className="filter-bar">
+        <button className="assign-btn" onClick={() => openForm(false)}>Assign KPI</button>
+        <select value={filterDept} onChange={e => setFilterDept(e.target.value)}>
+          <option value="all">All Departments</option>
+          <option value="HR">HR</option>
+          <option value="Finance">Finance</option>
+          <option value="Marketing">Marketing</option>
+          <option value="IT">IT</option>
         </select>
       </div>
 
-      <div style={{ overflowX: 'auto', marginTop: '20px' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', border: '2px solid #0b5c66' }}>
-          <thead style={{ backgroundColor: '#0b5c66', color: 'white' }}>
-            <tr>
-              <th style={thStyle} onClick={() => handleSort('title')}>Title ⬍</th>
-              <th style={thStyle}>Description</th>
-              <th style={thStyle} onClick={() => handleSort('target')}>Target ⬍</th>
-              <th style={thStyle} onClick={() => handleSort('staff')}>Staff Name ⬍</th>
-              <th style={thStyle} onClick={() => handleSort('dept')}>Department ⬍</th>
-              <th style={thStyle}>Actions</th>
+      <table className="kpi-table">
+        <thead>
+          <tr>
+            <th>KPI ID</th>
+            <th>Title</th>
+            <th>Staff</th>
+            <th>Department</th>
+            <th>Priority</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredKPIs.map(kpi => (
+            <tr key={kpi.id}>
+              <td>{kpi.id}</td>
+              <td>{kpi.title}</td>
+              <td>{kpi.assignedTo.name}</td>
+              <td>{kpi.assignedTo.department}</td>
+              <td>{renderBadge(kpi.priority)}</td>
+              <td className="action-buttons">
+                <button className="action-details" onClick={() => setDetailsId(kpi.id)}>Details</button>
+                <button className="action-edit" onClick={() => openForm(true, kpi.id)}>Edit</button>
+                <button className="action-delete" onClick={() => handleDelete(kpi.id)}>Delete</button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {filteredKpis.map((kpi, idx) => (
-              <tr key={idx}>
-                <td style={tdStyle}>{kpi.title}</td>
-                <td style={tdStyle}>{kpi.desc}</td>
-                <td style={tdStyle}>{kpi.target}%</td>
-                <td style={tdStyle}>{kpi.staff}</td>
-                <td style={tdStyle}>{kpi.dept}</td>
-                <td style={tdStyle}>
-                  <button style={btnPrimary}>Edit</button>
-                  <button style={{ ...btnSecondary, marginLeft: '5px', backgroundColor: '#b22222' }}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Modal for Assign/Edit */}
+      {isPopupOpen && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>{isEditMode ? 'Edit KPI' : 'Assign New KPI'}</h3>
+            <form onSubmit={handleSubmit} className="kpi-form">
+              <label>Title</label>
+              <input type="text" name="title" value={formData.title} onChange={handleChange} />
+
+              <label>Description</label>
+              <input type="text" name="description" value={formData.description} onChange={handleChange} />
+            
+              <label>Staff ID</label>
+              <input type="text" name="staffId" value={formData.staffId} onChange={handleChange} />
+            
+              <label>Staff Name</label>
+              <input type="text" name="staffName" value={formData.staffName} onChange={handleChange} />
+            
+              <label>Department</label>
+              <input type="text" name="department" value={formData.department} onChange={handleChange} />
+            
+              <label>Manager Name</label>
+              <input type="text" name="managerName" value={formData.managerName} onChange={handleChange} />
+            
+              <label>Manager ID</label>
+              <input type="text" name="managerId" value={formData.managerId} onChange={handleChange} />
+            
+              <label>Start Date</label>
+              <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} />
+            
+              <label>End Date</label>
+              <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
+            
+              <label>Category</label>
+              <input type="text" name="category" value={formData.category} onChange={handleChange} />
+            
+              <label>Priority</label>
+              <select name="priority" value={formData.priority} onChange={handleChange}>
+                <option value="">Select Priority</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            
+              <button type="submit" className="form-button green">{isEditMode ? 'Update KPI' : 'Assign KPI'}</button>
+              <button type="button" className="form-button red" onClick={() => setIsPopupOpen(false)}>Cancel</button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Details */}
+      {detailsId && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>KPI Details</h3>
+            {(() => {
+              const kpi = kpis.find(k => k.id === detailsId);
+              return kpi ? (
+                <div>
+                  <p><strong>Title:</strong> {kpi.title}</p>
+                  <p><strong>Description:</strong> {kpi.description}</p>
+                  <p><strong>Staff:</strong> {kpi.assignedTo.name}</p>
+                  <p><strong>Staff ID:</strong> {kpi.assignedTo.staffId}</p>
+                  <p><strong>Department:</strong> {kpi.assignedTo.department}</p>
+                  <p><strong>Manager:</strong> {kpi.assignedBy.name}</p>
+                  <p><strong>Manager ID:</strong> {kpi.assignedBy.managerId}</p>
+                  <p><strong>Start Date:</strong> {kpi.startDate}</p>
+                  <p><strong>Due Date:</strong> {kpi.dueDate}</p>
+                  <p><strong>Category:</strong> {kpi.category}</p>
+                  <p><strong>Priority:</strong> {kpi.priority}</p>
+                </div>
+              ) : null;
+            })()}
+            <button className="red-btn" onClick={() => setDetailsId(null)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-const inputStyle = {
-  width: '100%',
-  padding: '10px',
-  marginBottom: '15px',
-};
-
-const btnPrimary = {
-  padding: '10px 20px',
-  backgroundColor: '#0b5c66',
-  color: 'white',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
-};
-
-const btnSecondary = {
-  padding: '10px 20px',
-  backgroundColor: '#aaa',
-  color: 'white',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
-};
-
-const thStyle = {
-  padding: '10px',
-  border: '1px solid #0b5c66',
-  cursor: 'pointer',
-};
-
-const tdStyle = {
-  padding: '10px',
-  border: '1px solid #0b5c66',
-};
-
-export default KpiManagement;
+export default KPIManagement;

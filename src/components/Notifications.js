@@ -1,18 +1,16 @@
 import React, { useEffect } from 'react';
 import './Notification.css';
-import { AiOutlineCheckCircle, AiOutlineExclamationCircle } from 'react-icons/ai';
+import { AiOutlineCheckCircle, AiOutlineExclamationCircle, AiOutlineClose } from 'react-icons/ai';
 
 const Notification = ({ message, type = 'success', onClose }) => {
   useEffect(() => {
-    if (!message) return; // guard clause
-
+    if (!message) return;
     const timer = setTimeout(() => {
       onClose();
     }, 2000);
     return () => clearTimeout(timer);
   }, [message, onClose]);
 
-  // ❗ Ensure nothing renders if there's no message
   if (!message) return null;
 
   const icon =
@@ -24,11 +22,18 @@ const Notification = ({ message, type = 'success', onClose }) => {
 
   return (
     <div className={`toast-notification ${type}`}>
-      {icon}
-      <span>{message}</span>
+      <div className="toast-left">
+        {icon}
+        <span>{message}</span>
+      </div>
+
+      {type === 'error' && (
+        <button className="toast-close" onClick={onClose}>
+          <AiOutlineClose />
+        </button>
+      )}
     </div>
   );
 };
-
 
 export default Notification;

@@ -35,9 +35,10 @@ function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/manager" element={<Manager />} />
           <Route path="/verify-kpi" element={<VerifyKPI />} />
-          <Route path="/verify-kpi/:staffId" element={<KPIDetails />} />
+          <Route path="/kpi-details/:staffId" element={<KPIDetails />} />
           <Route path="/staff" element={<Staff />} />
           <Route path="/kpi-management" element={<KPIManagement />} />
+          
         </Routes>
 
         <Footer />
