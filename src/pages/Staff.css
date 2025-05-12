@@ -56,9 +56,9 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    min-height: 120px; /* Reduced from 150px */
+    min-height: 150px;
     background-color: white;
-    border: 1px solid #eaeaea; 
+    border: 2px solid transparent; 
     transition: all 0.3s ease;
 }
 
@@ -75,14 +75,25 @@
     justify-content: center;
 }
 
-.card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+.total-kpis-card {
+    border-color: rgba(0, 0, 255, 0.3);
+}
+
+.on-track-card {
+    border-color: rgba(0, 128, 0, 0.3); /* Green with transparency */
+}
+
+.at-risk-card {
+    border-color: rgba(255, 165, 0, 0.3); /* Orange with transparency */
+}
+
+.behind-card {
+    border-color: rgba(255, 0, 0, 0.3); /* Red with transparency */
 }
 
 .card-title {
-    font-size: 36px; /* Increased from 30px */
-    font-weight: 700; /* Increased from 600 */
+    font-size: 30px;
+    font-weight: 600;
     margin-bottom: 10px;
 }
 
@@ -91,66 +102,7 @@
     color: gray;
 }
 
-/* Summary card colors */
-.total-kpis { color: #0d6efd; } /* Bright blue */
-.on-track { color: #198754; } /* Bright green */
-.at-risk { color: #fd7e14; } /* Bright orange */
-.behind { color: #dc3545; } /* Bright red */
-.completed-kpi { color: #198754; } /* Green */
-.incomplete-kpi { color: #6c757d; } /* Gray */
-.verified-kpi { color: #0dcaf0; } /* Cyan */
-
-.status-chip {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: white;
-    text-transform: uppercase;
-}
-  
-.status-chip.on-track {
-    background-color: #28a745; /* Green */
-}
-  
-.status-chip.at-risk {
-    background-color: #ffc107; /* Yellow */
-    color: #000;
-}
-  
-.status-chip.behind {
-    background-color: #dc3545; /* Red */
-}
-  
-.status-chip.completed {
-    background-color: #6c757d; /* Gray */
-}
-
-/* KPI Card Styles */
-.kpi-card {
-    background-color: white;
-    transition: all 0.2s ease;
-}
-
-.kpi-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15) !important;
-}
-
-/* Make progress bars taller */
-.progress {
-    height: 12px !important;
-    border-radius: 6px;
-}
-
-.progress-bar {
-    border-radius: 6px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .col-md-6 {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-}
+.total-kpis { color: blue; }
+.on-track { color: green; }
+.at-risk { color: orange; }
+.behind { color: red; }
