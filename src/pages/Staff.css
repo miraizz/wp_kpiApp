@@ -75,11 +75,6 @@
     justify-content: center;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
 .total-kpis-card {
     border-color: rgba(0, 0, 255, 0.3);
 }
