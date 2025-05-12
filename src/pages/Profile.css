@@ -1,0 +1,101 @@
+.profile-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #fff;
+}
+
+.profile-tab-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.profile-tab-buttons button {
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+  border-radius: 6px;
+  color:black
+}
+
+.profile-tab-buttons .active {
+  background: white;
+  border-bottom: 3px solid teal;
+  font-weight: bold;
+}
+
+.profile-card {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 25px;
+  border-radius: 8px;
+}
+
+.profile-card.danger {
+  border: 1px solid #faa;
+  background: #fff5f5;
+}
+
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  background: teal;
+  color: white;
+  border-radius: 50%;
+  font-size: 24px;
+  text-align: center;
+  line-height: 60px;
+  margin-bottom: 10px;
+}
+
+.profile-card input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.profile-card button {
+  padding: 10px 20px;
+  background-color: teal;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.profile-danger-btn {
+  background-color: #d9534f !important; /* Bootstrap-like red */
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.profile-danger-btn:hover {
+  background-color: #c9302c !important;
+}
+
+.profile-warning {
+  background: #ffe6e6;
+  color: #a94442;
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}
+
+.profile-card label {
+  display: block;
+  margin-top: 5px;
+  font-weight: 500;
+  color: #333;
+}

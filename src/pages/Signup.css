@@ -1,0 +1,148 @@
+.signup-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 20px;
+  }
+  
+  .signup-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    margin: 50px 50px;
+  }
+  
+  .card-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .card-header h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0b5c66;
+    margin-bottom: 0px;
+  }
+  
+  .card-header p {
+    color: #555;
+    font-size: 16px;
+  }
+  
+  .signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .form-group label {
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+  }
+  
+  .password-row,
+  .form-row {
+    display: flex;
+    gap: 15px;
+    width: 100%; /* Ensure full width */
+  }
+  
+  .password-row > .form-group,
+  .form-row > .form-group {
+    flex: 1 1 0; /* Equal flex basis */
+    min-width: 0; /* Prevent overflow */
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box; /* Include padding in width */
+  }
+  
+  .form-group input::placeholder,
+  .form-group select:invalid {
+    color: #aaa;
+    font-size: 14px;
+  }
+  
+  .form-group select {
+    color: #333;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #0b5c66;
+  }
+  
+  .signup-button {
+    background-color: #0b5c66;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  .login-link {
+    text-align: center;
+    color: #555;
+    margin-top: 10px;
+  }
+  
+  .login-link a {
+    color: #0b5c66;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .signup-card {
+      padding: 30px 20px;
+    }
+    
+    .card-header h2 {
+      font-size: 24px;
+    }
+    
+    .password-row,
+    .form-row {
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .password-row > .form-group,
+    .form-row > .form-group {
+      width: 100%;
+    }
+  }
