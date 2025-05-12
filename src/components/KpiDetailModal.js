@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Alert } from 'react-bootstrap';
+import './KpiDetailModal.css'; // Import custom CSS
 
 function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
   // Basic states for the modal
@@ -157,161 +157,187 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
   // Define when Submit KPI button should be enabled
   const canSubmitKpi = currentProgress === 100 && hasEvidence && !isSubmitted;
 
+  // If modal is not showing, don't render anything
+  if (!show) return null;
+
   return (
-    <Modal show={show} onHide={onClose} centered size="lg">
-      <Modal.Header closeButton>
-        <Modal.Title>KPI Details</Modal.Title>
-      </Modal.Header>
-      
-      <Modal.Body>
-        {/* KPI Details Header */}
-        <div className="kpi-details-header mb-4 p-3 border-bottom">
-          <h5>{kpiDetails.title}</h5>
-          <p className="text-muted mb-1">{kpiDetails.description}</p>
-          <div className="d-flex justify-content-between mb-2">
-            <span>Category: <strong>{kpiDetails.category}</strong></span>
-            <span>Priority: <strong>{kpiDetails.priority}</strong></span>
-            <span>Status: <strong>{kpiDetails.status}</strong></span>
-          </div>
-          <div className="d-flex justify-content-between">
-            <span>Start Date: <strong>{kpiDetails.startDate}</strong></span>
-            <span>Due Date: <strong>{kpiDetails.dueDate}</strong></span>
-            <span>Verification: <strong>{kpiDetails.verifyStatus}</strong></span>
-          </div>
-        </div>
-
-        {/* Success alert for actions */}
-        {showSuccessAlert && (
-          <Alert 
-            variant="success" 
-            onClose={() => setShowSuccessAlert(false)} 
-            dismissible
+    <div className="modal-overlay">
+      <div className="modal-container">
+        {/* Modal Header */}
+        <div className="modal-header">
+          <h3 className="modal-title">KPI Details</h3>
+          <button 
+            onClick={onClose}
+            className="close-button"
           >
-            {successMessage}
-          </Alert>
-        )}
-
-        {/* Progress Display - Show actual KPI progress */}
-        <h6>Current Progress: {kpiDetails.progress || 0}%</h6>
-        <div className="progress mb-3">
-          <div 
-            className={`progress-bar ${(kpiDetails.progress || 0) === 100 ? 'bg-success' : 'bg-info'}`} 
-            style={{ width: `${kpiDetails.progress || 0}%` }}>
-            {kpiDetails.progress || 0}%
-          </div>
+            ×
+          </button>
         </div>
         
-        {/* Display comments if available */}
-        {comments.length > 0 && (
-          <div className="mb-4">
-            <h6>Progress Comments:</h6>
-            <div className="comment-history p-2 border rounded" style={{ maxHeight: '150px', overflowY: 'auto' }}>
-              {comments.map((comment, index) => (
-                <div key={index} className="mb-2 p-2 border-bottom">
-                  <div className="d-flex justify-content-between">
-                    <small className="text-muted">{comment.date || 'Unknown date'}</small>
-                    <small className="badge bg-info">{comment.progress || 0}%</small>
-                  </div>
-                  <p className="mb-0">{comment.text}</p>
-                  {comment.isFinal && <small className="text-success">Final submission comment</small>}
-                </div>
-              ))}
+        {/* Modal Body */}
+        <div className="modal-body">
+          {/* KPI Details Header */}
+          <div className="kpi-details-header">
+            <h5>{kpiDetails.title}</h5>
+            <p className="kpi-description">{kpiDetails.description}</p>
+            <div className="kpi-info-row">
+              <span>Category: <strong>{kpiDetails.category}</strong></span>
+              <span>Priority: <strong>{kpiDetails.priority}</strong></span>
+              <span>Status: <strong>{kpiDetails.status}</strong></span>
+            </div>
+            <div className="kpi-info-row">
+              <span>Start Date: <strong>{kpiDetails.startDate}</strong></span>
+              <span>Due Date: <strong>{kpiDetails.dueDate}</strong></span>
+              <span>Verification: <strong>{kpiDetails.verifyStatus}</strong></span>
             </div>
           </div>
-        )}
 
-        {/* Display submitted message or edit controls */}
-        {isSubmitted ? (
-          <Alert variant="info" className="mt-3">
-            Your KPI has been submitted. Please wait for verification.
-          </Alert>
-        ) : (
-          <>
-            {/* Progress Selection */}
-            <Form.Group className="mb-3">
-              <Form.Label>Update Progress</Form.Label>
-              <div className="d-flex gap-2 mb-3">
-                {[20, 40, 60, 80, 100].map((val) => (
-                  <Button
-                    key={val}
-                    variant={selectedProgress === val ? 'primary' : 'outline-primary'}
-                    onClick={() => handleProgressChange(val)}
-                  >
-                    {val}%
-                  </Button>
+          {/* Success alert for actions */}
+          {showSuccessAlert && (
+            <div className="alert alert-success">
+              <span>{successMessage}</span>
+              <button 
+                className="close-alert"
+                onClick={() => setShowSuccessAlert(false)}
+              >
+                ×
+              </button>
+            </div>
+          )}
+
+          {/* Progress Display - Show actual KPI progress */}
+          <h6>Current Progress: {kpiDetails.progress || 0}%</h6>
+          <div className="progress-container">
+            <div 
+              className={`progress-bar ${(kpiDetails.progress || 0) === 100 ? 'progress-complete' : ''}`} 
+              style={{ width: `${kpiDetails.progress || 0}%` }}>
+            </div>
+          </div>
+          
+          {/* Display comments if available */}
+          {comments.length > 0 && (
+            <div className="comments-section">
+              <h6>Progress Comments:</h6>
+              <div className="comments-container">
+                {comments.map((comment, index) => (
+                  <div key={index} className="comment-item">
+                    <div className="comment-header">
+                      <small className="comment-date">{comment.date || 'Unknown date'}</small>
+                      <small className="progress-badge">
+                        {comment.progress || 0}%
+                      </small>
+                    </div>
+                    <p>{comment.text}</p>
+                    {comment.isFinal && 
+                      <small className="final-comment">Final submission comment</small>
+                    }
+                  </div>
                 ))}
               </div>
-            </Form.Group>
+            </div>
+          )}
 
-            {/* Comment Input */}
-            <Form.Group className="mb-3">
-              <Form.Label>Comment</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                placeholder="Add a comment about your progress..."
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-              />
-            </Form.Group>
+          {/* Display submitted message or edit controls */}
+          {isSubmitted ? (
+            <div className="submitted-message">
+              Your KPI has been submitted. Please wait for verification.
+            </div>
+          ) : (
+            <>
+              {/* Progress Selection */}
+              <div className="form-group">
+                <label>Update Progress</label>
+                <div className="progress-buttons">
+                  {[20, 40, 60, 80, 100].map((val) => (
+                    <button
+                      key={val}
+                      className={`progress-btn ${selectedProgress === val ? 'selected' : ''}`}
+                      onClick={() => handleProgressChange(val)}
+                    >
+                      {val}%
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-            {/* Evidence Upload - Only show after progress is updated to 100% */}
-            {showEvidenceSection && (
-              <Form.Group className="mb-3">
-                <Form.Label>Upload Evidence</Form.Label>
-                {!hasEvidence && (
-                  <Alert variant="warning" className="mb-2">
-                    <i className="fa fa-exclamation-triangle"></i> Please upload evidence to complete your KPI submission.
-                  </Alert>
-                )}
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileChange}
-                  className="form-control mb-2"
-                />
-                <Button
-                  variant="outline-secondary"
-                  onClick={handleEvidenceUpload}
-                  disabled={files.length === 0}
-                >
-                  Upload Evidence
-                </Button>
-                {hasEvidence && <small className="text-success d-block mt-1">✓ Evidence uploaded</small>}
-              </Form.Group>
-            )}
-          </>
-        )}
-      </Modal.Body>
+              {/* Comment Input */}
+              <div className="form-group">
+                <label htmlFor="comment">Comment</label>
+                <textarea
+                  id="comment"
+                  rows={3}
+                  className="comment-textarea"
+                  placeholder="Add a comment about your progress..."
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                ></textarea>
+              </div>
 
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>Close</Button>
-        
-        {!isSubmitted && (
-          <>
-            {/* Update Progress Button */}
-            <Button
-              variant="primary"
-              onClick={handleProgressSubmit}
-              disabled={!comment.trim()}
-            >
-              Update Progress
-            </Button>
-            
-            {/* Submit KPI Button - Only if progress is 100% and evidence is uploaded */}
-            {showEvidenceSection && (
-              <Button
-                variant="success"
-                onClick={handleKpiSubmit}
-                disabled={!hasEvidence}
+              {/* Evidence Upload - Only show after progress is updated to 100% */}
+              {showEvidenceSection && (
+                <div className="form-group">
+                  <label>Upload Evidence</label>
+                  {!hasEvidence && (
+                    <div className="warning-alert">
+                      <i className="warning-icon">⚠️</i>
+                      Please upload evidence to complete your KPI submission.
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleFileChange}
+                    className="file-input"
+                  />
+                  <button
+                    className={`upload-btn ${files.length === 0 ? 'disabled' : ''}`}
+                    onClick={handleEvidenceUpload}
+                    disabled={files.length === 0}
+                  >
+                    Upload Evidence
+                  </button>
+                  {hasEvidence && <small className="success-text">✓ Evidence uploaded</small>}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* Modal Footer */}
+        <div className="modal-footer">
+          <button 
+            className="close-btn"
+            onClick={onClose}
+          >
+            Close
+          </button>
+          
+          {!isSubmitted && (
+            <>
+              {/* Update Progress Button */}
+              <button
+                className={`update-btn ${!comment.trim() ? 'disabled' : ''}`}
+                onClick={handleProgressSubmit}
+                disabled={!comment.trim()}
               >
-                Submit KPI
-              </Button>
-            )}
-          </>
-        )}
-      </Modal.Footer>
-    </Modal>
+                Update Progress
+              </button>
+              
+              {/* Submit KPI Button - Only if progress is 100% and evidence is uploaded */}
+              {showEvidenceSection && (
+                <button
+                  className={`submit-btn ${!hasEvidence ? 'disabled' : ''}`}
+                  onClick={handleKpiSubmit}
+                  disabled={!hasEvidence}
+                >
+                  Submit KPI
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
