@@ -85,7 +85,7 @@ const Navbar = () => {
             {role === 'Staff' && (
               <>
                 <Link to="/staff">Dashboard</Link>
-                <Link to="/verify-kpi/:staffId">View KPI</Link>
+                {/* <Link to="/verify-kpi/:staffId">View KPI</Link> */}
               </>
             )}
 
