@@ -23,11 +23,11 @@ const Team = () => {
     <div className="team-container">
       {/* Left Column: Search + Team List */}
       <div className="left-column">
-        <div className="search-bar-container">
+        <div className="aliff-search-bar-container">
           <input
             type="text"
             placeholder="Search team members..."
-            className="search-bar"
+            className="aliff-search-bar"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
