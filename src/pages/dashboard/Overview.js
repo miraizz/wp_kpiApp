@@ -126,22 +126,22 @@ const Overview = () => {
     return (
         <div className="overview-page">
             <div className="manager-cards-container">
-                <div className="card">
+                <div className="aliff-card">
                     <h3 className="manager-card-name">Team Members</h3>
                     <div className="manager-card-number">{teamMembersCount}</div>
                     <p className="manager-card-description">Staff with active KPIs</p>
                 </div>
-                <div className="card">
+                <div className="aliff-card">
                     <h3 className="manager-card-name">Total KPIs</h3>
                     <div className="manager-card-number">{totalKPIs}</div>
                     <p className="manager-card-description">Across all team members</p>
                 </div>
-                <div className="card">
+                <div className="aliff-card">
                     <h3 className="manager-card-name">Average Completion</h3>
                     <div className="manager-card-number">{avgCompletion}%</div>
                     <p className="manager-card-description">Team average performance</p>
                 </div>
-                <div className="card">
+                <div className="aliff-card">
                     <h3 className="manager-card-name">Action Required</h3>
                     <div className="manager-card-number">{actionRequired}</div>
                     <p className="manager-card-description">KPIs pending review</p>

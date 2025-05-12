@@ -144,19 +144,19 @@ const Team = () => {
                     gap: "16px", // Space between cards
                   }}
                 >
-                  <div className="card" style={{ flex: 1 }}>
+                  <div className="aliff-card" style={{ flex: 1 }}>
                     <h3 className="manager-card-name">KPIs</h3>
                     <div className="manager-card-number">10</div>
                   </div>
-                  <div className="card" style={{ flex: 1 }}>
+                  <div className="aliff-card" style={{ flex: 1 }}>
                     <h3 className="manager-card-name">Completion</h3>
                     <div className="manager-card-number">100%</div>
                   </div>
-                  <div className="card" style={{ flex: 1 }}>
+                  <div className="aliff-card" style={{ flex: 1 }}>
                     <h3 className="manager-card-name">Completed</h3>
                     <div className="manager-card-number">10</div>
                   </div>
-                  <div className="card" style={{ flex: 1 }}>
+                  <div className="aliff-card" style={{ flex: 1 }}>
                     <h3 className="manager-card-name">Pending Review</h3>
                     <div className="manager-card-number">10</div>
                   </div>
