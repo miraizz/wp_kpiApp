@@ -371,3 +371,11 @@
     flex: 1 0 auto;
   }
 }
+
+.modal-body h6 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  color: #333;
+}
