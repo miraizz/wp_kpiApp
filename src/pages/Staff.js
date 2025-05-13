@@ -312,7 +312,7 @@ function Staff() {
 
               <div className="kpi-footer">
                 <div className="kpi-meta">
-                  Due: {kpi.dueDate} | {kpi.assignedTo ? kpi.assignedTo.name : 'N/A'}
+                  Due: {kpi.dueDate} |
                   {kpi.verifyStatus && (
                     <span className={`verification-badge ${kpi.verifyStatus.toLowerCase()}`}>
                       {kpi.verifyStatus}
