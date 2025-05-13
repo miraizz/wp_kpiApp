@@ -1,0 +1,69 @@
+.details-container {
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.details-container h2 {
+  margin-bottom: 20px;
+}
+
+.kpi-detail-box {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+}
+
+.kpi-detail-box h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.kpi-detail-box p {
+  margin: 4px 0;
+}
+
+.actions {
+  margin-top: 10px;
+}
+
+.actions button {
+  margin-right: 10px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.actions .accept {
+  background-color: #22c55e;
+}
+
+.actions .reject {
+  background-color: #ef4444;
+}
+
+.actions .accept:hover {
+  background-color: #16a34a;
+}
+
+.actions .reject:hover {
+  background-color: #dc2626;
+}
+
+.back-button {
+  margin: 20px 0;
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #e2e2e2;
+}
