@@ -246,7 +246,7 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
           ) : (
             <>
 
-        {/* Hide Progress & Comment Selection when progress is 100 */}
+        {/* Hide Progress & Comment update when progress is 100 */}
             {currentProgress !== 100 && (
               <>
                 {/* Progress Selection */}
