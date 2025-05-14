@@ -39,9 +39,9 @@ const AllKPIs = () => {
                 <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#000' }}>{kpi.progress}%</span>
               </div>
 
-              <div className="progress-bar-container">
+              <div className="aliff-progress-bar-container">
                 <div
-                  className="progress-bar"
+                  className="aliff-progress-bar"
                   style={{ width: `${kpi.progress}%` }}
                 />
               </div>
