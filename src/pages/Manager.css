@@ -197,7 +197,7 @@
     color: #888;
 }
 
-.progress-bar-container {
+.aliff-progress-bar-container {
     width: 100%;
     background-color: #e0e0e0;
     border-radius: 10px;
@@ -205,7 +205,7 @@
     margin-top: 0.5rem;
 }
 
-.progress-bar {
+.aliff-progress-bar {
     height: 100%;
     background-color: #4caf50;
     border-radius: 10px;

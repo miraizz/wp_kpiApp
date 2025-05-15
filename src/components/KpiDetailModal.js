@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './KpiDetailModal.css'; // Import custom CSS
+import { dummyKPIs } from '../data/dummyKPIs';
 
 function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
   // Basic states for the modal
@@ -244,35 +245,42 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
             </div>
           ) : (
             <>
-              {/* Progress Selection */}
-              <div className="form-group">
-                <label>Update Progress</label>
-                <div className="progress-buttons">
-                  {[20, 40, 60, 80, 100].map((val) => (
-                    <button
-                      key={val}
-                      className={`progress-btn ${selectedProgress === val ? 'selected' : ''}`}
-                      onClick={() => handleProgressChange(val)}
-                    >
-                      {val}%
-                    </button>
-                  ))}
+
+        {/* Hide Progress & Comment update when progress is 100 */}
+            {currentProgress !== 100 && (
+              <>
+                {/* Progress Selection */}
+                <div className="form-group">
+                  <label>Update Progress</label>
+                  <div className="progress-buttons">
+                    {[20, 40, 60, 80, 100].map((val) => (
+                      <button
+                        key={val}
+                        className={`progress-btn ${selectedProgress === val ? 'selected' : ''}`}
+                        onClick={() => handleProgressChange(val)}
+                      >
+                        {val}%
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Comment Input */}
-              <div className="form-group">
-                <label htmlFor="comment">Comment</label>
-                <textarea
-                  id="comment"
-                  rows={3}
-                  className="comment-textarea"
-                  placeholder="Add a comment about your progress..."
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                ></textarea>
-              </div>
+                {/* Comment Input */}
+                <div className="form-group">
+                  <label htmlFor="comment">Comment</label>
+                  <textarea
+                    id="comment"
+                    rows={3}
+                    className="comment-textarea"
+                    placeholder="Add a comment about your progress..."
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                  ></textarea>
+                </div>
+              </>
+            )}
 
+      
               {/* Evidence Upload - Only show after progress is updated to 100% */}
               {showEvidenceSection && (
                 <div className="form-group">
