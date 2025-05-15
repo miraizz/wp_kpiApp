@@ -66,7 +66,7 @@ export const dummyKPIs = [
     {
       id: "KPI-2025-005",
       title: "Create Forecasting Model",
-      description: "Develop predictive model for Q4 budgeting.",
+      description: "Develop a predictive model for Q4 budgeting.",
       category: "Performance",
       priority: "High",
       progress: 100,
