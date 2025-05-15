@@ -13,6 +13,8 @@ const KPIManagement = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
   const [detailsId, setDetailsId] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+
 
   const openForm = (edit = false, id = null) => {
     if (edit) {
@@ -93,10 +95,13 @@ const KPIManagement = () => {
     setIsPopupOpen(false);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Delete this KPI?')) {
-      setKpis(prev => prev.filter(kpi => kpi.id !== id));
-    }
+  const requestDelete = (id) => {
+    setConfirmDeleteId(id);
+  };
+
+  const confirmDelete = () => {
+    setKpis(prev => prev.filter(kpi => kpi.id !== confirmDeleteId));
+    setConfirmDeleteId(null);
   };
 
   const renderBadge = (priority) => {
@@ -149,7 +154,7 @@ const KPIManagement = () => {
               <td className="action-buttons">
                 <button className="action-details" onClick={() => setDetailsId(kpi.id)}>Details</button>
                 <button className="action-edit" onClick={() => openForm(true, kpi.id)}>Edit</button>
-                <button className="action-delete" onClick={() => handleDelete(kpi.id)}>Delete</button>
+                <button className="action-delete" onClick={() => requestDelete(kpi.id)}>Delete</button>
               </td>
             </tr>
           ))}
@@ -231,6 +236,19 @@ const KPIManagement = () => {
               ) : null;
             })()}
             <button className="red-btn" onClick={() => setDetailsId(null)}>Close</button>
+          </div>
+        </div>
+      )}
+      {/* 🆕 Delete Confirmation Modal */}
+      {confirmDeleteId && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>Are you absolutely sure?</h3>
+            <p>This action cannot be undone. This will permanently delete the KPI from the system.</p>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <button className="form-button red" onClick={confirmDelete}>Yes, delete this KPI</button>
+              <button className="form-button green" onClick={() => setConfirmDeleteId(null)}>Cancel</button>
+            </div>
           </div>
         </div>
       )}

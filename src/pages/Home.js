@@ -1,14 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Home.css';
 
 const Home = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(!!sessionStorage.getItem('user'));
+
+  // Watch for changes in sessionStorage
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsLoggedIn(!!sessionStorage.getItem('user'));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // If logout is triggered internally (not via another tab), use polling fallback:
+    const interval = setInterval(handleStorageChange, 500);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
     <div>
       <section className="hero home-hero">
         <div className="hero-content">
           <h2>Welcome to <span className="highlight">KPI Management System!</span></h2>
           <p>Track and manage your team's performance efficiently with real-time insights.</p>
-          <a href="/signup" className="cta-button">Get Started</a>
+
+          {!isLoggedIn && (
+            <a href="/signup" className="cta-button">Get Started</a>
+          )}
         </div>
         <img src="/images/dashboard-preview.png" alt="Dashboard Preview" className="hero-image" />
       </section>
