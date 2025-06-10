@@ -2,6 +2,15 @@ import React, { useEffect, useState } from 'react';
 import './Home.css';
 
 const Home = () => {
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/transactions')
+      .then((res) => res.json())
+      .then((data) => setMessage(JSON.stringify(data, null, 2)))
+      .catch((err) => console.error('API Error:', err));
+  }, []);
+  
   const [isLoggedIn, setIsLoggedIn] = useState(!!sessionStorage.getItem('user'));
 
   // Watch for changes in sessionStorage
@@ -26,6 +35,7 @@ const Home = () => {
       <section className="hero home-hero">
         <div className="hero-content">
           <h2>Welcome to <span className="highlight">KPI Management System!</span></h2>
+          <p>API says: {message}</p>
           <p>Track and manage your team's performance efficiently with real-time insights.</p>
 
           {!isLoggedIn && (
