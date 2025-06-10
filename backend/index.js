@@ -1,17 +1,15 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config(); 
+require('dotenv').config();
 const connectDB = require('./db');
-const Transaction = require('./models/Transaction');
 
 const app = express();
-const PORT = process.env.PORT || 5000; // Use port from .env or default to 5000
+const PORT = process.env.PORT || 5000;
 
-// Connect to the database when the application starts
 connectDB();
 
 app.use(cors());
-app.use(express.json()); // Middleware to parse JSON request bodies
+app.use(express.json());
 
 // Test general backend status
 app.get('/api/test', (req, res) => {
