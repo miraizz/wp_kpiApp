@@ -5,12 +5,17 @@ const Home = () => {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/transactions')
+    fetch('/api/test')
       .then((res) => res.json())
-      .then((data) => setMessage(JSON.stringify(data, null, 2)))
-      .catch((err) => console.error('API Error:', err));
+      .then((data) => {
+        setMessage(data.message);
+      })
+      .catch((err) => {
+        console.error('Error fetching API:', err);
+        setMessage('Error fetching API');
+      });
   }, []);
-  
+
   const [isLoggedIn, setIsLoggedIn] = useState(!!sessionStorage.getItem('user'));
 
   // Watch for changes in sessionStorage
