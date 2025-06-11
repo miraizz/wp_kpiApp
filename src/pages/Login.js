@@ -5,27 +5,39 @@ import './Login.css';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (email && password) {
-      let role = '';
-      if (email.toLowerCase() === 'manager@example.com') {
-        role = 'Manager';
-        navigate('/manager');
-      } else if (email.toLowerCase() === 'staff@example.com') {
-        role = 'Staff';
-        navigate('/staff');
-      } else {
-        role = 'Staff';
-        navigate('/staff');
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!res.ok) {
+        const { error } = await res.json();
+        setErrorMsg(error || 'Login failed');
+        return;
       }
 
-      sessionStorage.setItem('user', email);
-      sessionStorage.setItem('email', email);
+      const { email: userEmail, role } = await res.json();
+
+      sessionStorage.setItem('user', userEmail);
+      sessionStorage.setItem('email', userEmail);
       sessionStorage.setItem('role', role);
+
+      if (role === 'Manager') {
+        navigate('/manager');
+      } else {
+        navigate('/staff');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setErrorMsg('Something went wrong. Please try again.');
     }
   };
 
@@ -33,7 +45,7 @@ const Login = () => {
     <div className="login-page">
       <div className="login-card">
         <div className="card-header">
-          <h2>Welcome to KPI Management System</h2><br></br>
+          <h2>Welcome to KPI Management System</h2><br />
           <p>Enter your credentials to access your dashboard</p>
         </div>
 
@@ -62,6 +74,8 @@ const Login = () => {
             />
           </div>
 
+          {errorMsg && <p className="error-msg">{errorMsg}</p>}
+
           <button type="submit" className="login-button">Sign In</button>
 
           <p className="signup-link">
@@ -69,9 +83,9 @@ const Login = () => {
           </p>
 
           <div style={{ fontSize: '14px', textAlign: 'center', marginTop: '20px' }}>
-            <span role="img" aria-label="key">🔑</span> Demo login credentials:<br />
+            {/* <span role="img" aria-label="key">🔑</span> Demo login credentials:<br />
             <strong>Manager:</strong> manager@example.com<br />
-            <strong>Staff:</strong> staff@example.com
+            <strong>Staff:</strong> staff@example.com */}
           </div>
         </form>
       </div>

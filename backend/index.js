@@ -1,82 +1,91 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const connectDB = require('./db');
-
+const mongoose = require('mongoose');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 
+const User = require('./models/User');
+
+// Connect to MongoDB using Mongoose
+const connectDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGODB_URI);
+        console.log('✅ MongoDB connected successfully with Mongoose!');
+    } catch (err) {
+        console.error('❌ MongoDB connection failed:', err);
+        process.exit(1); // Exit if DB connection fails
+    }
+};
+
+// Connect to the database on startup
+mongoose.set('debug', true);
 connectDB();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Test general backend status
+// Routes
 app.get('/api/test', (req, res) => {
+    console.log('✅ /api/test endpoint was hit');
     res.json({ message: 'Hello from Express backend (Mongoose enabled)!' });
 });
 
-// Test DB connection status (Mongoose specific)
-app.get('/api/test-db', async (req, res) => {
+// Health check for DB connection status
+app.get('/api/test-db', (req, res) => {
+    const state = mongoose.connection.readyState;
+    const statusMap = ['disconnected', 'connected', 'connecting', 'disconnecting'];
+    res.json({
+        status: statusMap[state],
+        code: state
+    });
+});
+
+app.post('/api/test-post', (req, res) => {
+    console.log('✅ Test POST hit:', req.body);
+    res.json({ ok: true });
+});
+
+app.post('/api/login', async (req, res) => {
+    console.log('🔥 Received POST /api/login');
+    console.log('📦 Request body:', req.body);
+
+    const { email, password } = req.body;
+
     try {
-        // Mongoose maintains the connection state.
-        // `mongoose.connection.readyState` will be 1 if connected.
-        if (Transaction.db.readyState === 1) { // Access connection state via any Mongoose model
-            res.json({ status: 'connected', message: 'MongoDB connected via Mongoose.' });
-        } else {
-            res.status(500).json({ status: 'disconnected', message: 'MongoDB not connected via Mongoose.' });
+        const user = await User.findOne({ email: email.toLowerCase() });
+
+        console.log('🔍 Fetched user:', user);
+
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials (no user found)' });
         }
+
+        if (user.password !== password) {
+            console.log(`❌ Password mismatch: expected "${user.password}", got "${password}"`);
+            return res.status(401).json({ error: 'Invalid credentials (wrong password)' });
+        }
+
+        console.log("✅ Login successful for:", user.email);
+        res.json({ email: user.email, role: user.role });
+
     } catch (err) {
-        // This catch block might not be hit for connection errors, as connectDB handles it
-        res.status(500).json({ error: err.message });
+        console.error('❌ Login error:', err);
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
-// Get all transactions
-app.get('/api/transactions', async (req, res) => {
+app.get('/api/users', async (req, res) => {
     try {
-        // Use the Mongoose model to find documents
-        const transactions = await Transaction.find({});
-        res.json(transactions);
+        const users = await User.find({});
+        res.json(users);
     } catch (err) {
-        console.error('Error fetching transactions:', err);
-        res.status(500).json({ error: 'Failed to fetch transactions' });
+        res.status(500).json({ error: 'Failed to fetch users' });
     }
 });
 
-// Add a new transaction
-app.post('/api/transactions', async (req, res) => {
-    try {
-        const { description, amount, type, category } = req.body;
-
-        // Basic server-side validation. Mongoose schema validation will also run.
-        if (!description || !amount || !type || !category) {
-            return res.status(400).json({ error: 'Please provide all required fields: description, amount, type, category.' });
-        }
-
-        // Create a new Mongoose document
-        const newTransaction = new Transaction({
-            description,
-            amount,
-            type,
-            category
-        });
-
-        // Save the document to the database
-        const savedTransaction = await newTransaction.save();
-        res.status(201).json(savedTransaction); // Respond with 201 Created status and the saved document
-    } catch (err) {
-        console.error('Error adding transaction:', err);
-        // Handle Mongoose validation errors
-        if (err.name === 'ValidationError') {
-            return res.status(400).json({ error: err.message });
-        }
-        res.status(500).json({ error: 'Failed to add transaction.' });
-    }
-});
-
-// ---
-
+// Start
 app.listen(PORT, () => {
     console.log(`🚀 Backend running at http://localhost:${PORT}`);
 });

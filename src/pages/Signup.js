@@ -18,7 +18,7 @@ const Signup = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
@@ -26,16 +26,35 @@ const Signup = () => {
       return;
     }
 
-    // Save to sessionStorage
-    sessionStorage.setItem("user", form.email);
-    sessionStorage.setItem("email", form.email);
-    sessionStorage.setItem("name", form.fullName);
-    sessionStorage.setItem("phone", form.phone);
-    sessionStorage.setItem("department", form.department);
-    sessionStorage.setItem("role", form.role);
+    try {
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+          role: form.role
+          // You can also add fullName, department, phone if backend supports them
+        })
+      });
 
-    alert("Account created successfully (demo)");
-    navigate('/');
+      if (!res.ok) {
+        const { error } = await res.json();
+        alert(error || 'Registration failed.');
+        return;
+      }
+
+      const data = await res.json();
+      alert('Account created successfully!');
+      sessionStorage.setItem("user", data.user.email);
+      sessionStorage.setItem("email", data.user.email);
+      sessionStorage.setItem("role", data.user.role);
+
+      navigate('/login');
+    } catch (err) {
+      console.error('Registration error:', err);
+      alert('Something went wrong. Please try again.');
+    }
   };
 
   return (
@@ -45,7 +64,7 @@ const Signup = () => {
           <h2>Create an account</h2>
           <p>Enter your details below to create your account</p>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="signup-form">
           <div className="form-group">
             <label htmlFor="fullName">Full Name</label>
@@ -59,7 +78,7 @@ const Signup = () => {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
             <input
@@ -72,7 +91,7 @@ const Signup = () => {
               required
             />
           </div>
-          
+
           <div className="password-row">
             <div className="form-group half-width">
               <label htmlFor="password">Password</label>
@@ -99,7 +118,7 @@ const Signup = () => {
               />
             </div>
           </div>
-          
+
           <div className="form-row">
             <div className="form-group half-width">
               <label htmlFor="role">Role</label>
@@ -128,7 +147,7 @@ const Signup = () => {
               />
             </div>
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="phone">Phone Number (Optional)</label>
             <input
@@ -140,11 +159,11 @@ const Signup = () => {
               onChange={handleChange}
             />
           </div>
-          
+
           <button type="submit" className="signup-button">
             Create Account
           </button>
-          
+
           <p className="login-link">
             Already have an account? <a href="/login">Sign in</a>
           </p>

@@ -4,17 +4,17 @@ import './Home.css';
 const Home = () => {
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    fetch('/api/test')
-      .then((res) => res.json())
-      .then((data) => {
-        setMessage(data.message);
-      })
-      .catch((err) => {
-        console.error('Error fetching API:', err);
-        setMessage('Error fetching API');
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch('http://localhost:5050/api/test')
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setMessage(data.message);
+  //     })
+  //     .catch((err) => {
+  //       console.error('Error fetching API:', err);
+  //       setMessage('Error fetching API');
+  //     });
+  // }, []);
 
   const [isLoggedIn, setIsLoggedIn] = useState(!!sessionStorage.getItem('user'));
 
@@ -40,7 +40,7 @@ const Home = () => {
       <section className="hero home-hero">
         <div className="hero-content">
           <h2>Welcome to <span className="highlight">KPI Management System!</span></h2>
-          <p>API says: {message}</p>
+          {/* <p>API says: {message}</p> */}
           <p>Track and manage your team's performance efficiently with real-time insights.</p>
 
           {!isLoggedIn && (
