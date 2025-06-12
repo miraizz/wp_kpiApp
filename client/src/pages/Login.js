@@ -24,11 +24,15 @@ const Login = () => {
         return;
       }
 
-      const { email: userEmail, role } = await res.json();
+      const { email: userEmail, role, staffId, name } = await res.json();
 
-      sessionStorage.setItem('user', userEmail);
-      sessionStorage.setItem('email', userEmail);
-      sessionStorage.setItem('role', role);
+      // Store entire user object for easy retrieval later
+      sessionStorage.setItem('user', JSON.stringify({
+        email: userEmail,
+        role,
+        staffId,
+        name
+      }));
 
       if (role === 'Manager') {
         navigate('/manager');

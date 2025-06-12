@@ -11,20 +11,28 @@ const SessionManager = () => {
     if (!user) return;
 
     let timeout;
+    let expiredTriggered = false; // prevents double execution
 
     const resetTimer = () => {
+      if (expiredTriggered) return;
+
       clearTimeout(timeout);
+
       timeout = setTimeout(() => {
+        // Check again if user is still present
+        if (!sessionStorage.getItem('user')) return;
+
         sessionStorage.clear();
+        expiredTriggered = true;
         setExpired(true);
         setTimeout(() => navigate('/'), 2000);
-      }, 600000); // 600 seconds
+      }, 600000); // 10 minutes
     };
 
     const events = ['mousemove', 'keydown', 'click'];
     events.forEach((e) => window.addEventListener(e, resetTimer));
 
-    resetTimer();
+    resetTimer(); // start timer on mount
 
     return () => {
       clearTimeout(timeout);

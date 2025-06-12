@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './KpiDetailModal.css'; // Import custom CSS
-import { dummyKPIs } from '../data/dummyKPIs';
+import './KPIDetailModal.css'; // Import custom CSS
 
-function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
+function KPIDetailModal({ show, onClose, onSubmit, kpiDetails }) {
   // Basic states for the modal
   const [selectedProgress, setSelectedProgress] = useState(0);
   const [currentProgress, setCurrentProgress] = useState(0); // Actual progress from KPI
@@ -13,7 +12,7 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [showEvidenceSection, setShowEvidenceSection] = useState(false);
-  
+
   // Update states when KPI details change
   useEffect(() => {
     if (kpiDetails) {
@@ -21,14 +20,14 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
       setCurrentProgress(kpiDetails.progress || 0);
       setComment('');
       setFiles([]);
-      
+
       // Check if evidence files exist
       setHasEvidence(kpiDetails.files && kpiDetails.files.length > 0);
-      
+
       // Initialize comments array if it exists in kpiDetails
       setComments(kpiDetails.comments || []);
       setShowSuccessAlert(false);
-      
+
       // Only show evidence section if current progress is 100%
       setShowEvidenceSection(kpiDetails.progress === 100);
     }
@@ -51,24 +50,34 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
   };
 
   // Handle evidence upload
-  const handleEvidenceUpload = () => {
+  const handleEvidenceUpload = async () => {
     if (files.length > 0) {
-      // Send evidence to parent component
-      onSubmit({
-        type: 'evidence',
-        evidence: files,
-        progress: currentProgress
-      });
-      
-      // Set evidence as uploaded locally
-      setHasEvidence(true);
-      
-      // Clear files after upload
-      setFiles([]);
-      
-      // Show success message for evidence upload
-      setSuccessMessage('Evidence uploaded successfully! You can now submit your KPI.');
-      setShowSuccessAlert(true);
+      try {
+        // Step 1: Prepare new files list
+        const updatedFiles = [...(kpiDetails.files || []), ...files];
+
+        // Step 2: Send to backend
+        await fetch(`/api/kpi/${kpiDetails.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ files: updatedFiles }),
+        });
+
+        // Step 3: Notify parent and update local state
+        onSubmit({
+          type: 'evidence',
+          evidence: updatedFiles,
+          progress: currentProgress
+        });
+
+        setHasEvidence(true);
+        setFiles([]);
+        setSuccessMessage('Evidence uploaded successfully! You can now submit your KPI.');
+        setShowSuccessAlert(true);
+      } catch (error) {
+        console.error('Failed to upload evidence:', error);
+        alert('Error uploading evidence. Please try again.');
+      }
     }
   };
 
@@ -85,14 +94,14 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
       date: new Date().toLocaleString(),
       progress: selectedProgress
     };
-    
+
     // Update local comments array
     const updatedComments = [...comments, newComment];
     setComments(updatedComments);
-    
+
     // Update current progress (this controls when to show evidence section)
     setCurrentProgress(selectedProgress);
-    
+
     // Only show evidence section if selected progress is 100%
     if (selectedProgress === 100) {
       setShowEvidenceSection(true);
@@ -104,7 +113,7 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
       // Regular success message
       setSuccessMessage('Progress updated successfully!');
     }
-    
+
     // Match the parent component's expected data structure
     onSubmit({
       type: 'progress',
@@ -112,14 +121,14 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
       comment: comment,
       comments: updatedComments
     });
-    
+
     // Show success alert
     setShowSuccessAlert(true);
-    
+
     // Clear comment field after successful update
     setComment('');
   };
-  
+
   // Handle final KPI submission
   const handleKpiSubmit = () => {
     // Get the last comment from the comments array to use as final comment
@@ -127,7 +136,7 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
     if (comments.length > 0) {
       finalCommentText = comments[comments.length - 1].text;
     }
-    
+
     // Create final comment object using the last comment text
     const finalComment = {
       text: finalCommentText,
@@ -135,13 +144,13 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
       progress: 100,
       isFinal: true
     };
-    
+
     // Update comments with final comment (if not empty)
     let updatedComments = [...comments];
     if (finalCommentText) {
       updatedComments = [...comments, finalComment];
     }
-    
+
     // Match the parent component's expected data structure
     onSubmit({
       type: 'submit',
@@ -149,7 +158,7 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
       comment: finalCommentText,
       comments: updatedComments
     });
-    
+
     // Show success message
     setSuccessMessage('KPI submitted successfully!');
     setShowSuccessAlert(true);
@@ -167,14 +176,14 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
         {/* Modal Header */}
         <div className="modal-header">
           <h3 className="modal-title">KPI Details</h3>
-          <button 
+          <button
             onClick={onClose}
             className="close-button"
           >
             ×
           </button>
         </div>
-        
+
         {/* Modal Body */}
         <div className="modal-body">
           {/* KPI Details Header */}
@@ -197,7 +206,7 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
           {showSuccessAlert && (
             <div className="alert alert-success">
               <span>{successMessage}</span>
-              <button 
+              <button
                 className="close-alert"
                 onClick={() => setShowSuccessAlert(false)}
               >
@@ -209,12 +218,12 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
           {/* Progress Display - Show actual KPI progress */}
           <h6>Current Progress: {kpiDetails.progress || 0}%</h6>
           <div className="progress-container">
-            <div 
-              className={`progress-bar ${(kpiDetails.progress || 0) === 100 ? 'progress-complete' : ''}`} 
+            <div
+              className={`progress-bar ${(kpiDetails.progress || 0) === 100 ? 'progress-complete' : ''}`}
               style={{ width: `${kpiDetails.progress || 0}%` }}>
             </div>
           </div>
-          
+
           {/* Display comments if available */}
           {comments.length > 0 && (
             <div className="comments-section">
@@ -229,7 +238,7 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
                       </small>
                     </div>
                     <p>{comment.text}</p>
-                    {comment.isFinal && 
+                    {comment.isFinal &&
                       <small className="final-comment">Final submission comment</small>
                     }
                   </div>
@@ -246,41 +255,41 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
           ) : (
             <>
 
-        {/* Hide Progress & Comment update when progress is 100 */}
-            {currentProgress !== 100 && (
-              <>
-                {/* Progress Selection */}
-                <div className="form-group">
-                  <label>Update Progress</label>
-                  <div className="progress-buttons">
-                    {[20, 40, 60, 80, 100].map((val) => (
-                      <button
-                        key={val}
-                        className={`progress-btn ${selectedProgress === val ? 'selected' : ''}`}
-                        onClick={() => handleProgressChange(val)}
-                      >
-                        {val}%
-                      </button>
-                    ))}
+              {/* Hide Progress & Comment update when progress is 100 */}
+              {currentProgress !== 100 && (
+                <>
+                  {/* Progress Selection */}
+                  <div className="form-group">
+                    <label>Update Progress</label>
+                    <div className="progress-buttons">
+                      {[20, 40, 60, 80, 100].map((val) => (
+                        <button
+                          key={val}
+                          className={`progress-btn ${selectedProgress === val ? 'selected' : ''}`}
+                          onClick={() => handleProgressChange(val)}
+                        >
+                          {val}%
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* Comment Input */}
-                <div className="form-group">
-                  <label htmlFor="comment">Comment</label>
-                  <textarea
-                    id="comment"
-                    rows={3}
-                    className="comment-textarea"
-                    placeholder="Add a comment about your progress..."
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                  ></textarea>
-                </div>
-              </>
-            )}
+                  {/* Comment Input */}
+                  <div className="form-group">
+                    <label htmlFor="comment">Comment</label>
+                    <textarea
+                      id="comment"
+                      rows={3}
+                      className="comment-textarea"
+                      placeholder="Add a comment about your progress..."
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                    ></textarea>
+                  </div>
+                </>
+              )}
 
-      
+
               {/* Evidence Upload - Only show after progress is updated to 100% */}
               {showEvidenceSection && (
                 <div className="form-group">
@@ -300,8 +309,7 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
                   <button
                     className={`upload-btn ${files.length === 0 ? 'disabled' : ''}`}
                     onClick={handleEvidenceUpload}
-                    disabled={files.length === 0}
-                  >
+                    disabled={files.length === 0}>
                     Upload Evidence
                   </button>
                   {hasEvidence && <small className="success-text">✓ Evidence uploaded</small>}
@@ -313,13 +321,13 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
 
         {/* Modal Footer */}
         <div className="modal-footer">
-          <button 
+          <button
             className="close-btn"
             onClick={onClose}
           >
             Close
           </button>
-          
+
           {!isSubmitted && (
             <>
               {/* Update Progress Button */}
@@ -330,14 +338,13 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
               >
                 Update Progress
               </button>
-              
+
               {/* Submit KPI Button - Only if progress is 100% and evidence is uploaded */}
               {showEvidenceSection && (
                 <button
-                  className={`submit-btn ${!hasEvidence ? 'disabled' : ''}`}
+                  className={`submit-btn ${!canSubmitKpi ? 'disabled' : ''}`}
                   onClick={handleKpiSubmit}
-                  disabled={!hasEvidence}
-                >
+                  disabled={!canSubmitKpi}>
                   Submit KPI
                 </button>
               )}
@@ -349,4 +356,4 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
   );
 }
 
-export default KpiDetailModal;
+export default KPIDetailModal;

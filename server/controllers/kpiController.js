@@ -132,12 +132,14 @@ exports.verifyKPI = async (req, res) => {
 };
 
 exports.getKPIsByStaffId = async (req, res) => {
+    const { staffId } = req.params;
+
     try {
-        const staffId = req.params.staffId;
-        const kpis = await KPI.find({ 'assignedTo.staffId': staffId });
+        const kpis = await KPI.find({ 'assignedTo.staffId': staffId }); // ← FIXED CASE
         res.json(kpis);
     } catch (err) {
-        console.error('Error fetching staff KPIs:', err);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Error fetching KPIs:', err);
+        res.status(500).json({ error: 'Server error' });
     }
 };
+

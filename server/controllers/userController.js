@@ -30,7 +30,7 @@ exports.signup = async (req, res) => {
             role,
             department,
             phone,
-            staffId  // 🔥 included here
+            staffId
         });
 
         const userWithoutPassword = newUser.toObject();
@@ -59,7 +59,13 @@ exports.login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials (wrong password)' });
         }
 
-        res.json({ email: user.email, role: user.role });
+        res.json({
+            email: user.email,
+            role: user.role,
+            staffId: user.staffId,
+            name: user.fullName
+          });
+          
     } catch (err) {
         console.error('Login error:', err);
         res.status(500).json({ error: 'Server error' });

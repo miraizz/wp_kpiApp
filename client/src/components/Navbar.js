@@ -4,25 +4,32 @@ import Notification from './Notifications';
 import './Navbar.css';
 
 const Navbar = () => {
-  const user = sessionStorage.getItem('user');
-  const role = sessionStorage.getItem('role');
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [notification, setNotification] = useState('');
   const [profileOpen, setProfileOpen] = useState(false);
-  const dropdownRef = useRef(null);
-  const navigate = useNavigate();
+
+  // Parse session user
+  let parsedUser = null;
+  try {
+    parsedUser = JSON.parse(sessionStorage.getItem('user'));
+  } catch (e) {
+    console.warn("Invalid user session:", e);
+  }
+
+  const role = parsedUser?.role;
+  const email = parsedUser?.email;
 
   const handleLogout = () => {
     sessionStorage.clear();
     setNotification('You have been logged out.');
     setIsOpen(false);
     setProfileOpen(false);
-    setTimeout(() => {
-      navigate('/');
-    }, 2000);
+    setTimeout(() => navigate('/'), 2000);
   };
 
-  // Close profile dropdown if clicked outside
+  // Close profile dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -33,7 +40,7 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Auto-close mobile menu on resize to desktop
+  // Close menus on window resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) {
@@ -57,11 +64,19 @@ const Navbar = () => {
 
       <nav className="nav-navbar">
         <div className="nav-navbar-container">
-          <Link to="/" className="nav-navbar-brand">
+          <Link
+            to={
+              role === 'Manager'
+                ? '/manager'
+                : role === 'Staff'
+                  ? '/staff'
+                  : '/'
+            }
+            className="nav-navbar-brand"
+          >
             <h1>KPIHub</h1>
           </Link>
 
-          {/* Hamburger menu */}
           <button
             className={`nav-hamburger ${isOpen ? 'open' : ''}`}
             onClick={() => setIsOpen(!isOpen)}
@@ -70,9 +85,8 @@ const Navbar = () => {
             <span></span><span></span><span></span>
           </button>
 
-          {/* Desktop Links */}
           <div className="nav-desktop-links">
-            {!user && <Link to="/">Home</Link>}
+            {!parsedUser && <Link to="/">Home</Link>}
 
             {role === 'Manager' && (
               <>
@@ -82,14 +96,9 @@ const Navbar = () => {
               </>
             )}
 
-            {role === 'Staff' && (
-              <>
-                <Link to="/staff">Dashboard</Link>
-                {/* <Link to="/verify-kpi/:staffId">View KPI</Link> */}
-              </>
-            )}
+            {role === 'Staff' && <Link to="/staff">Dashboard</Link>}
 
-            {user ? (
+            {parsedUser ? (
               <div
                 className="nav-profile-label-wrapper"
                 ref={dropdownRef}
@@ -97,7 +106,7 @@ const Navbar = () => {
               >
                 <div className="nav-profile-label">
                   <span className="nav-profile-icon-label">👤</span>
-                  <span className="nav-profile-email">{user}</span>
+                  <span className="nav-profile-email">{email}</span>
                 </div>
                 {profileOpen && (
                   <div className="nav-dropdown-menu">
@@ -131,13 +140,12 @@ const Navbar = () => {
         {role === 'Staff' && (
           <>
             <Link to="/staff" onClick={() => setIsOpen(false)}>Dashboard</Link>
-            <Link to="/verify-kpi/:staffId" onClick={() => setIsOpen(false)}>View KPI</Link>
             <Link to="/profile" onClick={() => setIsOpen(false)}>Profile Settings</Link>
             <button onClick={handleLogout}>Logout</button>
           </>
         )}
 
-        {!user && (
+        {!parsedUser && (
           <>
             <Link to="/login" onClick={() => setIsOpen(false)}>Log In</Link>
             <Link to="/signup" onClick={() => setIsOpen(false)}>Sign Up</Link>
