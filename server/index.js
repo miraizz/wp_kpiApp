@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const authRoutes = require('./routes/userRoutes');
+const userRoutes = require('./routes/userRoutes');
+const kpiRoutes = require('./routes/kpiRoutes');
 const User = require('./models/userModel');
 
 dotenv.config();
@@ -28,8 +29,10 @@ mongoose.connect(process.env.MONGODB_URI)
     });
 
 // Routes
-app.use('/api', authRoutes);
+app.use('/api', userRoutes);
+app.use('/api/kpi', kpiRoutes);
 
+// Test routes
 app.get('/api/test', (req, res) => {
     res.json({ message: 'API is working' });
 });

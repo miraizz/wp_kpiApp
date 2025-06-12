@@ -1,90 +1,171 @@
-import React, { useState } from 'react';
-import './Profile.css'; 
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Profile.css';
 import Notification from '../components/Notifications';
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('view');
   const [notification, setNotification] = useState('');
-
-  // Demo user data
-  const [profile, setProfile] = useState({
-    name: sessionStorage.getItem('name') || 'User Name',
-    email: sessionStorage.getItem('email') || 'No email',
-    phone: sessionStorage.getItem('phone') || 'Not set',
-    department: sessionStorage.getItem('department') || 'Not specified',
-    role: sessionStorage.getItem('role') || 'Staff'
-  });
-
-
+  const [profile, setProfile] = useState(null); // null initially to check for loading state
   const [passwords, setPasswords] = useState({
     current: '',
     new: '',
     confirm: ''
   });
 
+  useEffect(() => {
+    const email = sessionStorage.getItem('email');
+    if (!email) {
+      setNotification('⚠️ No email found in session');
+      return;
+    }
+
+    fetch(`/api/profile?email=${encodeURIComponent(email)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) {
+          setProfile(data.user);
+        } else {
+          setNotification(data.error || '❌ Profile not found');
+        }
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
+        setNotification('❌ Failed to fetch profile');
+      });
+  }, []);
+
   const handleProfileChange = (e) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
+    setProfile(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handlePasswordChange = (e) => {
     setPasswords({ ...passwords, [e.target.name]: e.target.value });
   };
 
-  const handleSaveProfile = () => {
-    Object.entries(profile).forEach(([key, value]) => {
-        sessionStorage.setItem(key, value);
-    });
-    setNotification('Profile updated successfully (demo)');
-  };
+  const handleSaveProfile = async () => {
+    const { fullName, email, phone, department } = profile;
 
+    if (!fullName || !email || !phone || !department) {
+      setNotification('⚠️ All fields (Full Name, Email, Phone, Department) are required.');
+      return;
+    }
 
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profile)
+      });
 
-  const handleChangePassword = () => {
-    if (passwords.new !== passwords.confirm) {
-        setNotification('New passwords do not match.');
-    } else {
-        setNotification('Password changed successfully (demo)');
+      const data = await res.json();
+      if (!res.ok) return setNotification(data.error || '❌ Failed to update profile');
+
+      setProfile(data.user);
+      sessionStorage.setItem('name', data.user.fullName);
+      sessionStorage.setItem('email', data.user.email);
+      sessionStorage.setItem('phone', data.user.phone);
+      sessionStorage.setItem('department', data.user.department);
+      sessionStorage.setItem('role', data.user.role);
+
+      setNotification('✅ Profile updated successfully');
+    } catch {
+      setNotification('❌ Error updating profile');
     }
   };
 
+  const handleChangePassword = async () => {
+    if (passwords.new !== passwords.confirm)
+      return setNotification('⚠️ New passwords do not match');
 
-  const handleDeactivate = () => {
-    setNotification("Account deactivated (demo)");
+    try {
+      const res = await fetch('/api/password', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: profile.email,
+          currentPassword: passwords.current,
+          newPassword: passwords.new
+        })
+      });
+
+      const result = await res.json();
+      if (!res.ok) return setNotification(result.error || '❌ Password change failed');
+
+      setNotification('✅ Password changed successfully');
+      setPasswords({ current: '', new: '', confirm: '' });
+    } catch {
+      setNotification('❌ Error changing password');
+    }
   };
 
-  
+  const handleDeactivate = async () => {
+    if (!window.confirm('Are you sure you want to deactivate your account?')) return;
+
+    try {
+      const res = await fetch('/api/', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: profile.email })
+      });
+      
+      const result = await res.json();
+
+      if (!res.ok) return setNotification(result.error || '❌ Failed to deactivate');
+
+      sessionStorage.clear();
+      setNotification('✅ Account deactivated');
+      navigate('/signup');
+    } catch {
+      setNotification('❌ Error deactivating account');
+    }
+  };
+
+  if (!profile) {
+    return (
+      <div className="profile-container">
+        <Notification message={notification} onClose={() => setNotification('')} />
+        <p>Loading profile...</p>
+      </div>
+    );
+  }
+
+  const getInitials = (fullName) =>
+    fullName?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'US';
 
   return (
     <div className="profile-container">
-    <Notification message={notification} onClose={() => setNotification('')} />
+      <Notification message={notification} onClose={() => setNotification('')} />
       <h2>User Profile</h2>
+
       <div className="profile-tab-buttons">
-        {['view', 'edit', 'password', 'deactivate'].map((tab) => (
+        {['view', 'edit', 'password', 'deactivate'].map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={activeTab === tab ? 'active' : ''}
           >
-            {tab === 'view' && 'View Profile'}
-            {tab === 'edit' && 'Edit Profile'}
-            {tab === 'password' && 'Change Password'}
-            {tab === 'deactivate' && 'Deactivate Account'}
+            {{
+              view: 'View Profile',
+              edit: 'Edit Profile',
+              password: 'Change Password',
+              deactivate: 'Deactivate Account'
+            }[tab]}
           </button>
         ))}
       </div>
 
       {activeTab === 'view' && (
         <div className="profile-card">
-          <div className="profile-avatar">
-              {profile.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
-          </div>
-
-          <h3>{profile.name}</h3>
-          <p>{profile.role}</p>
+          <div className="profile-avatar">{getInitials(profile.fullName)}</div>
+          <h3>{profile.fullName}</h3>
           <div className="details">
             <p><strong>Email:</strong> {profile.email}</p>
-            <p><strong>Phone:</strong> {profile.phone}</p>
-            <p><strong>Department:</strong> {profile.department}</p>
+            <p><strong>Phone:</strong> {profile.phone || 'N/A'}</p>
+            <p><strong>Department:</strong> {profile.department || 'N/A'}</p>
             <p><strong>Role:</strong> {profile.role}</p>
           </div>
         </div>
@@ -92,76 +173,48 @@ const Profile = () => {
 
       {activeTab === 'edit' && (
         <div className="profile-card">
-            <h3>Edit Profile</h3>
-            <p>Update your personal information.</p>
+          <h3>Edit Profile</h3>
+          <label>Full Name</label>
+          <input name="fullName" value={profile.fullName || ''} onChange={handleProfileChange} />
 
-            <label htmlFor="name">Full Name</label>
-            <input type="text" id="name" name="name" value={profile.name} onChange={handleProfileChange} />
+          <label>Email</label>
+          <input name="email" value={profile.email || ''} onChange={handleProfileChange} />
 
-            <label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" value={profile.email} onChange={handleProfileChange} />
+          <label>Phone</label>
+          <input name="phone" value={profile.phone || ''} onChange={handleProfileChange} />
 
-            <label htmlFor="phone">Phone</label>
-            <input type="tel" id="phone" name="phone" value={profile.phone} onChange={handleProfileChange} />
+          <label>Department</label>
+          <input name="department" value={profile.department || ''} onChange={handleProfileChange} />
 
-            <label htmlFor="department">Department</label>
-            <input type="text" id="department" name="department" value={profile.department} onChange={handleProfileChange} />
+          <label>Role</label>
+          <input name="role" value={profile.role || ''} readOnly />
 
-            <label htmlFor="role">Role</label>
-            <input type="text" id="role" name="role" value={profile.role} readOnly />
-
-            <button onClick={handleSaveProfile}>Save Changes</button>
+          <button onClick={handleSaveProfile}>Save Changes</button>
         </div>
-       )}
+      )}
 
-
-    {activeTab === 'password' && (
+      {activeTab === 'password' && (
         <div className="profile-card">
-            <h3>Change Password</h3>
-            <p>Update your account password.</p>
+          <h3>Change Password</h3>
+          <label>Enter Current Password</label>
+          <input type="password" name="current" value={passwords.current} onChange={handlePasswordChange} />
 
-            <label htmlFor="current">Current Password</label>
-            <input
-            type="password"
-            id="current"
-            name="current"
-            placeholder="Enter current password"
-            value={passwords.current}
-            onChange={handlePasswordChange}
-            />
+          <label>Enter New Password</label>
+          <input type="password" name="new" value={passwords.new} onChange={handlePasswordChange} />
 
-            <label htmlFor="new">New Password</label>
-            <input
-            type="password"
-            id="new"
-            name="new"
-            placeholder="Enter new password"
-            value={passwords.new}
-            onChange={handlePasswordChange}
-            />
+          <label>Confirm New Password</label>
+          <input type="password" name="confirm" value={passwords.confirm} onChange={handlePasswordChange} />
 
-            <label htmlFor="confirm">Confirm New Password</label>
-            <input
-            type="password"
-            id="confirm"
-            name="confirm"
-            placeholder="Confirm new password"
-            value={passwords.confirm}
-            onChange={handlePasswordChange}
-            />
-
-            <button onClick={handleChangePassword}>Change Password</button>
+          <button onClick={handleChangePassword}>Change Password</button>
         </div>
-        )}
-
+      )}
 
       {activeTab === 'deactivate' && (
         <div className="profile-card danger">
           <h3>Deactivate Account</h3>
-          <p>This will deactivate your account and remove your data from the system.</p>
+          <p>This will permanently remove your account and all data.</p>
           <div className="profile-warning">
-            <strong>Warning</strong><br />
-            This action cannot be undone. This will permanently deactivate your account and remove your data from our servers.
+            <strong>Warning:</strong><br />This action cannot be undone.
           </div>
           <button className="profile-danger-btn" onClick={handleDeactivate}>Deactivate Account</button>
         </div>
