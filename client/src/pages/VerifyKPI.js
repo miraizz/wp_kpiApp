@@ -1,53 +1,70 @@
-import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { dummyKPIs, getStaffKpiCount } from '../data/dummyKPIs';
+import React, { useState, useEffect, useRef } from 'react';
 import './VerifyKPI.css';
 
 const VerifyKPI = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({
-    category: '',
-    department: '', // Removed verificationStatus filter
-  });
-
-  const [kpis, setKpis] = useState(dummyKPIs);
+  const [filters, setFilters] = useState({ category: '', department: '' });
+  const [kpis, setKpis] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [selectedKPI, setSelectedKPI] = useState(null);
   const dialogRef = useRef();
+
+  useEffect(() => {
+    fetch('/api/kpi')
+      .then(res => res.json())
+      .then(data => {
+        const verifiedData = Array.isArray(data) ? data.filter(kpi =>
+          kpi.status === 'Completed' &&
+          kpi.progress === 100 &&
+          kpi.submitted === true &&
+          kpi.verifyStatus === 'Pending'
+        ) : [];
+        setKpis(verifiedData);
+
+        // Extract unique departments and categories
+        const uniqueDepts = Array.from(new Set(data.map(k => k.assignedTo?.department).filter(Boolean)));
+        const uniqueCats = Array.from(new Set(data.map(k => k.category).filter(Boolean)));
+        setDepartments(uniqueDepts);
+        setCategories(uniqueCats);
+      })
+      .catch(err => {
+        console.error('Error loading KPIs:', err);
+        setKpis([]);
+      });
+  }, []);
 
   const openDetails = (kpi) => {
     setSelectedKPI(kpi);
     dialogRef.current?.showModal();
   };
 
-  const updateStatus = (id, newStatus) => {
-    // Update the KPI's status and verification status
-    const updatedKPIs = kpis.map(kpi => {
-      if (kpi.id === id) {
-        return {
-          ...kpi,
-          status: newStatus,
-          verifyStatus: newStatus === 'Accepted' ? 'Accepted' : 'Rejected',
-        };
-      }
-      return kpi;
-    });
+  const updateStatus = async (id, newStatus) => {
+    try {
+      const res = await fetch(`/api/kpi/verify/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          verifyStatus: newStatus,
+          comments: selectedKPI.comments || '',
+          status: newStatus === 'Accepted' ? 'Completed' : 'Rejected'
+        })
+      });
 
-    // Update the state with the modified KPIs
-    setKpis(updatedKPIs);
+      if (!res.ok) throw new Error('Failed to update KPI');
 
-    // Close the modal after the action
-    dialogRef.current?.close();
+      setKpis(prev => prev.filter(kpi => kpi.id !== id));
+      dialogRef.current?.close();
+    } catch (err) {
+      console.error(err.message);
+    }
   };
 
-  // Filter for KPIs that need approval (submitted: true and verifyStatus: "Pending")
-  const pendingKpis = kpis.filter(kpi => kpi.submitted === true && kpi.verifyStatus === 'Pending');
-
-  // Apply search and other filters
-  const filteredData = pendingKpis.filter((item) => {
+  const filteredKPIs = kpis.filter(kpi => {
     return (
-      item.assignedTo.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (filters.category ? item.category === filters.category : true) &&
-      (filters.department ? item.assignedTo.department === filters.department : true)
+      kpi.assignedTo?.name?.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (filters.category ? kpi.category === filters.category : true) &&
+      (filters.department ? kpi.assignedTo?.department === filters.department : true)
     );
   });
 
@@ -56,7 +73,6 @@ const VerifyKPI = () => {
       <h2 className="heading">Verify KPI</h2>
       <p className="description">Verify the evidence submitted by staff</p>
 
-      {/* Search and Filter Controls */}
       <div className="filter-section">
         <div className="search-bar">
           <input
@@ -70,22 +86,20 @@ const VerifyKPI = () => {
         <div className="filter-controls">
           <select name="category" value={filters.category} onChange={(e) => setFilters({ ...filters, category: e.target.value })}>
             <option value="">All Categories</option>
-            <option value="Documentation">Documentation</option>
-            <option value="Performance">Performance</option>
-            <option value="Compliance">Compliance</option>
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
           </select>
 
           <select name="department" value={filters.department} onChange={(e) => setFilters({ ...filters, department: e.target.value })}>
             <option value="">All Departments</option>
-            <option value="HR">HR</option>
-            <option value="IT">IT</option>
-            <option value="Finance">Finance</option>
-            <option value="Marketing">Marketing</option>
+            {departments.map(dept => (
+              <option key={dept} value={dept}>{dept}</option>
+            ))}
           </select>
         </div>
       </div>
 
-      {/* KPI Table */}
       <table className="kpi-table">
         <thead>
           <tr>
@@ -99,8 +113,8 @@ const VerifyKPI = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredData.length > 0 ? (
-            filteredData.map((kpi, index) => (
+          {filteredKPIs.length > 0 ? (
+            filteredKPIs.map((kpi, index) => (
               <tr key={kpi.id}>
                 <td>{index + 1}</td>
                 <td>{kpi.id}</td>
@@ -125,7 +139,6 @@ const VerifyKPI = () => {
         </tbody>
       </table>
 
-      {/* Modal for KPI Details */}
       <dialog ref={dialogRef} className="modal-dialog">
         {selectedKPI && (
           <div>
@@ -133,8 +146,7 @@ const VerifyKPI = () => {
             <p><strong>Description:</strong> {selectedKPI.description}</p>
             <p><strong>Category:</strong> {selectedKPI.category}</p>
             <p><strong>Priority:</strong> {selectedKPI.priority}</p>
-            <p><strong>Due Date:</strong> {selectedKPI.dueDate}</p>
-
+            <p><strong>Due Date:</strong> {new Date(selectedKPI.dueDate).toLocaleDateString()}</p>
             <p><strong>Status:</strong> {selectedKPI.status}</p>
             <p><strong>Verification Status:</strong> {selectedKPI.verifyStatus}</p>
 

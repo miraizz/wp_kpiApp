@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
-import { dummyKPIs } from '../../data/dummyKPIs';
+import React, { useState, useEffect } from 'react';
+import '../Manager.css';
 
 const AllKPIs = () => {
   const [search, setSearch] = useState("");
+  const [kpis, setKpis] = useState([]);
 
-  const filteredKPIs = dummyKPIs.filter((kpi) =>
-    kpi.title.toLowerCase().includes(search.toLowerCase()) ||
-    kpi.description.toLowerCase().includes(search.toLowerCase())
+  useEffect(() => {
+    fetch('/api/kpi')
+      .then(res => res.json())
+      .then(data => setKpis(data))
+      .catch(err => console.error("Error fetching KPIs:", err));
+  }, []);
+
+  const filteredKPIs = kpis.filter((kpi) =>
+    kpi.title?.toLowerCase().includes(search.toLowerCase()) ||
+    kpi.description?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -31,7 +39,7 @@ const AllKPIs = () => {
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <p className="kpi-description">{kpi.description}</p>
-                <span className={`kpi-priority ${kpi.priority.toLowerCase()}`}>{kpi.priority}</span>
+                <span className={`kpi-priority ${kpi.priority?.toLowerCase()}`}>{kpi.priority}</span>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
@@ -47,10 +55,9 @@ const AllKPIs = () => {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '0.5rem' }}>
-                <p className="kpi-start-date">Start: {kpi.startDate}</p>
-                <p className="kpi-due-date">Due: {kpi.dueDate}</p>
+                <p className="kpi-start-date">Start: {kpi.startDate?.slice(0, 10)}</p>
+                <p className="kpi-due-date">Due: {kpi.dueDate?.slice(0, 10)}</p>
               </div>
-
             </div>
           ))
         )}
@@ -58,6 +65,5 @@ const AllKPIs = () => {
     </div>
   );
 };
-
 
 export default AllKPIs;

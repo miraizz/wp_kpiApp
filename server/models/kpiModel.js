@@ -16,12 +16,12 @@ const kpiSchema = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String, default: '' }, // optional
     category: { type: String, default: 'General' },
-    priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'null' },
+    priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Low' },
     progress: { type: Number, default: 0, min: 0, max: 100 },
     status: {
         type: String,
         enum: ['On Track', 'Behind', 'At Risk', 'Completed'],
-        default: 'null'
+        default: 'Behind'
     },
     submitted: { type: Boolean, default: false },
     verifyStatus: {

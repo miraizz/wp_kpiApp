@@ -5,7 +5,10 @@ const {
     getKPIById,
     createKPI,
     updateKPI,
-    deleteKPI
+    deleteKPI,
+    getPendingKPIs,
+    verifyKPI,
+    getKPIsByStaffId
 } = require('../controllers/kpiController');
 
 // Route: /api/kpis
@@ -14,5 +17,8 @@ router.get('/:id', getKPIById);
 router.post('/', createKPI);
 router.put('/:id', updateKPI);
 router.delete('/:id', deleteKPI);
+router.get('/verify', getPendingKPIs);
+router.put('/verify/:id', verifyKPI);
+router.get('/staff/:staffId', getKPIsByStaffId);
 
 module.exports = router;

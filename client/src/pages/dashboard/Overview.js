@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -12,19 +12,33 @@ import {
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import '../Manager.css';
-import { dummyKPIs } from '../../data/dummyKPIs';
 
 ChartJS.register(ChartDataLabels, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
 const Overview = () => {
-    // Extract staff-level metrics
+    const [kpis, setKpis] = useState([]);
+
+    useEffect(() => {
+        fetch('/api/kpi')
+            .then(res => res.json())
+            .then(data => setKpis(data))
+            .catch(err => console.error('Failed to fetch KPI data:', err));
+    }, []);
+
+    // Map staff to total progress and count
     const staffMap = {};
-    dummyKPIs.forEach(kpi => {
-        const { staffId, name } = kpi.assignedTo;
+    kpis.forEach(kpi => {
+        const assigned = kpi.assignedTo || {};
+        const staffId = assigned.staffId;
+        const name = assigned.name;
+
+        if (!staffId || !name) return;
+
         if (!staffMap[staffId]) {
             staffMap[staffId] = { name, totalProgress: 0, count: 0 };
         }
-        staffMap[staffId].totalProgress += parseInt(kpi.progress);
+
+        staffMap[staffId].totalProgress += parseInt(kpi.progress || 0);
         staffMap[staffId].count += 1;
     });
 
@@ -33,24 +47,50 @@ const Overview = () => {
         completion: member.count ? Math.round(member.totalProgress / member.count) : 0,
     }));
 
-    // KPI status count for donut
-    const statusCount = { Completed: 0, Pending: 0, 'In Progress': 0 };
-    dummyKPIs.forEach(kpi => {
-        const progress = parseInt(kpi.progress);
-        if (progress === 100) {
-            statusCount.Completed += 1;
-        } else if (progress === 0) {
-            statusCount.Pending += 1;
-        } else {
-            statusCount['In Progress'] += 1;
-        }
+    // Donut chart categorization
+    let completedCount = 0;
+    let inProgressCount = 0;
+    let pendingCount = 0;
+
+    kpis.forEach(kpi => {
+        const progress = parseInt(kpi.progress || 0);
+        const { status, submitted, verifyStatus } = kpi;
+
+        const isCompleted = progress === 100 && status === 'Completed' && submitted && verifyStatus === 'Accepted';
+        const isPending = progress === 0;
+        const isInProgress = !isCompleted && !isPending;
+
+        if (isCompleted) completedCount++;
+        else if (isPending) pendingCount++;
+        else inProgressCount++;
     });
 
-    // Card metrics
-    const totalKPIs = dummyKPIs.length;
-    const teamMembersCount = Object.keys(staffMap).length;
-    const avgCompletion = Math.round(dummyKPIs.reduce((sum, kpi) => sum + parseInt(kpi.progress), 0) / totalKPIs);
-    const actionRequired = dummyKPIs.filter(kpi => kpi.status === 'Pending').length;
+    // Key metrics
+    const totalKPIs = kpis.length;
+
+    const staffWithActiveKPIs = new Set(
+        kpis
+            .filter(kpi => kpi.verifyStatus !== 'Accepted')
+            .map(kpi => kpi.assignedTo?.staffId)
+    ).size;
+
+    const completedKPI = kpis.filter(
+        kpi =>
+            kpi.progress === 100 &&
+            kpi.status === 'Completed' &&
+            kpi.submitted === true &&
+            kpi.verifyStatus === 'Accepted'
+    ).length;
+
+    const avgCompletion = totalKPIs ? Math.round((completedKPI / totalKPIs) * 100) : 0;
+
+    const actionRequired = kpis.filter(
+        kpi =>
+            kpi.progress === 100 &&
+            kpi.status === 'Completed' &&
+            kpi.submitted === true &&
+            kpi.verifyStatus === 'Pending'
+    ).length;
 
     const chartData = {
         labels: teamData.map(member => member.name),
@@ -95,11 +135,7 @@ const Overview = () => {
         labels: ['Completed', 'Pending', 'In Progress'],
         datasets: [
             {
-                data: [
-                    statusCount.Completed,
-                    statusCount.Pending,
-                    statusCount['In Progress'],
-                ],
+                data: [completedCount, pendingCount, inProgressCount],
                 backgroundColor: ['#FFB347', '#77DD77', '#84B6F4'],
                 hoverOffset: 6,
             },
@@ -115,7 +151,7 @@ const Overview = () => {
                 color: '#ffffff',
                 formatter: (value, context) => {
                     const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                    const percentage = ((value / total) * 100).toFixed(0);
+                    const percentage = total ? ((value / total) * 100).toFixed(0) : 0;
                     return `${percentage}%`;
                 },
                 font: { weight: 'bold', size: 14 },
@@ -127,9 +163,9 @@ const Overview = () => {
         <div className="overview-page">
             <div className="manager-cards-container">
                 <div className="aliff-card">
-                    <h3 className="manager-card-name">Team Members</h3>
-                    <div className="manager-card-number">{teamMembersCount}</div>
-                    <p className="manager-card-description">Staff with active KPIs</p>
+                    <h3 className="manager-card-name">Staff with Active KPIs</h3>
+                    <div className="manager-card-number">{staffWithActiveKPIs}</div>
+                    <p className="manager-card-description">Not yet verified (Pending/Rejected)</p>
                 </div>
                 <div className="aliff-card">
                     <h3 className="manager-card-name">Total KPIs</h3>
@@ -139,12 +175,12 @@ const Overview = () => {
                 <div className="aliff-card">
                     <h3 className="manager-card-name">Average Completion</h3>
                     <div className="manager-card-number">{avgCompletion}%</div>
-                    <p className="manager-card-description">Team average performance</p>
+                    <p className="manager-card-description">Completed / Total KPIs</p>
                 </div>
                 <div className="aliff-card">
                     <h3 className="manager-card-name">Action Required</h3>
                     <div className="manager-card-number">{actionRequired}</div>
-                    <p className="manager-card-description">KPIs pending review</p>
+                    <p className="manager-card-description">KPIs pending verification</p>
                 </div>
             </div>
 

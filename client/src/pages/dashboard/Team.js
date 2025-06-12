@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
-import { dummyKPIs } from '../../data/dummyKPIs';
+import React, { useEffect, useState } from 'react';
 import '../Manager.css';
 
 const Team = () => {
+  const [kpis, setKpis] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStaff, setSelectedStaff] = useState(null);
 
-  // Filter staff by search term
-  const staffWithKPIs = dummyKPIs.map(kpi => kpi.assignedTo).filter((staff, index, self) =>
-    self.findIndex(s => s.staffId === staff.staffId) === index // Ensure unique staff
-  );
+  useEffect(() => {
+    fetch('/api/kpi')
+      .then(res => res.json())
+      .then(data => setKpis(data))
+      .catch(err => console.error('Error loading KPIs:', err));
+  }, []);
+
+  const staffWithKPIs = kpis
+    .map(kpi => kpi.assignedTo)
+    .filter((staff, index, self) =>
+      staff &&
+      staff.staffId &&
+      self.findIndex(s => s.staffId === staff.staffId) === index
+    );
 
   const handleStaffSelect = (staffId) => {
     setSelectedStaff(staffId);
@@ -18,6 +28,30 @@ const Team = () => {
   const getAvatar = (name) => {
     return name ? name[0].toUpperCase() : '?';
   };
+
+  const selectedKPIs = kpis.filter(kpi => kpi.assignedTo?.staffId === selectedStaff);
+
+  const total = selectedKPIs.length;
+
+  const completed = selectedKPIs.filter(
+    kpi =>
+      kpi.progress === 100 &&
+      kpi.status === 'Completed' &&
+      kpi.submitted === true &&
+      kpi.verifyStatus === 'Accepted'
+  ).length;
+
+  const pendingReview = selectedKPIs.filter(
+    kpi =>
+      kpi.progress === 100 &&
+      kpi.status === 'Completed' &&
+      kpi.submitted === true &&
+      kpi.verifyStatus === 'Pending'
+  ).length;
+
+  const avgCompletion = total
+    ? Math.round(selectedKPIs.reduce((sum, kpi) => sum + parseInt(kpi.progress || 0), 0) / total)
+    : 0;
 
   return (
     <div className="team-container">
@@ -52,7 +86,7 @@ const Team = () => {
                   <p className="staff-department">{staff.department}</p>
                 </div>
                 <div className="kpi-count">
-                  {dummyKPIs.filter(kpi => kpi.assignedTo.staffId === staff.staffId).length} KPIs
+                  {kpis.filter(kpi => kpi.assignedTo.staffId === staff.staffId).length} KPIs
                 </div>
               </div>
             ))}
@@ -68,22 +102,21 @@ const Team = () => {
               <div className="staff-details"
                 style={{
                   display: "flex",
-                  flexDirection: "column", // Stack items vertically
-                  alignItems: "flex-start", // Align items to the start
+                  flexDirection: "column",
+                  alignItems: "flex-start",
                   padding: "16px",
                   fontSize: "1.25rem",
-                  width: "100%", // Ensure the staff details container takes full width
+                  width: "100%",
                 }}
               >
-                {/* Avatar, Name, and Department Section */}
+                {/* Avatar, Name, and Department */}
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "16px", // Space between staff info and the cards below
+                    marginBottom: "16px",
                   }}
                 >
-                  {/* Avatar */}
                   <div
                     className="avatar"
                     style={{
@@ -97,18 +130,16 @@ const Team = () => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      marginRight: "16px", // Space between avatar and staff info
+                      marginRight: "16px",
                     }}
                   >
                     {getAvatar(staff.name)}
                   </div>
-
-                  {/* Staff Info (Name and Department) */}
                   <div
                     className="staff-info"
                     style={{
                       display: "flex",
-                      flexDirection: "column", // Ensure name and department are stacked vertically
+                      flexDirection: "column",
                       justifyContent: "center",
                     }}
                   >
@@ -134,31 +165,31 @@ const Team = () => {
                   </div>
                 </div>
 
-                {/* Container for KPI and Other Cards */}
+                {/* KPI Metrics */}
                 <div className="manager-cards-container"
                   style={{
-                    width: "100%", // Full width of the parent
+                    width: "100%",
                     display: "flex",
-                    flexDirection: "row", // Align cards horizontally
-                    justifyContent: "space-between", // Distribute cards evenly
-                    gap: "16px", // Space between cards
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    gap: "16px",
                   }}
                 >
                   <div className="aliff-card" style={{ flex: 1 }}>
                     <h3 className="manager-card-name">KPIs</h3>
-                    <div className="manager-card-number">10</div>
+                    <div className="manager-card-number">{total}</div>
                   </div>
                   <div className="aliff-card" style={{ flex: 1 }}>
                     <h3 className="manager-card-name">Completion</h3>
-                    <div className="manager-card-number">100%</div>
+                    <div className="manager-card-number">{avgCompletion}%</div>
                   </div>
                   <div className="aliff-card" style={{ flex: 1 }}>
                     <h3 className="manager-card-name">Completed</h3>
-                    <div className="manager-card-number">10</div>
+                    <div className="manager-card-number">{completed}</div>
                   </div>
                   <div className="aliff-card" style={{ flex: 1 }}>
                     <h3 className="manager-card-name">Pending Review</h3>
-                    <div className="manager-card-number">10</div>
+                    <div className="manager-card-number">{pendingReview}</div>
                   </div>
                 </div>
               </div>
