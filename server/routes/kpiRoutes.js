@@ -1,12 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const kpiController = require('../controllers/kpiController');
+const {
+    getAllKPIs,
+    getKPIById,
+    createKPI,
+    updateKPI,
+    deleteKPI
+} = require('../controllers/kpiController');
 
 // Route: /api/kpis
-router.get('/', kpiController.getAllKPIs);
-router.get('/:id', kpiController.getKPIById);
-router.post('/', kpiController.createKPI);
-router.put('/:id', kpiController.updateKPI);
-router.delete('/:id', kpiController.deleteKPI);
+router.get('/', getAllKPIs);
+router.get('/:id', getKPIById);
+router.post('/', createKPI);
+router.put('/:id', updateKPI);
+router.delete('/:id', deleteKPI);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
 
-// POST /api/signup
+// POST /api/signup //register
 exports.signup = async (req, res) => {
     const { fullName, email, password, role, department, phone } = req.body;
 
@@ -11,6 +11,15 @@ exports.signup = async (req, res) => {
             return res.status(400).json({ error: 'Email already registered' });
         }
 
+        // Generate unique short staffId
+        let staffId;
+        let exists = true;
+        while (exists) {
+            staffId = `STAFF-${Math.floor(1000 + Math.random() * 9000)}`; // e.g., STAFF-4821
+            exists = await User.findOne({ staffId });
+        }
+
+        // Hash the password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -20,7 +29,8 @@ exports.signup = async (req, res) => {
             password: hashedPassword,
             role,
             department,
-            phone
+            phone,
+            staffId  // 🔥 included here
         });
 
         const userWithoutPassword = newUser.toObject();
@@ -32,6 +42,7 @@ exports.signup = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 // POST /api/login
 exports.login = async (req, res) => {
@@ -98,6 +109,24 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
+// DELETE /api/
+exports.deleteUser = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const result = await User.findOneAndDelete({ email });
+
+        if (!result) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ message: 'Account deleted successfully' });
+    } catch (err) {
+        console.error('Delete user error:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};  
+
 // PUT /api/password
 exports.changePassword = async (req, res) => {
     const { email, currentPassword, newPassword } = req.body;
@@ -119,21 +148,3 @@ exports.changePassword = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-
-// DELETE /api/
-exports.deleteUser = async (req, res) => {
-    const { email } = req.body;
-
-    try {
-        const result = await User.findOneAndDelete({ email });
-
-        if (!result) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        res.json({ message: 'Account deleted successfully' });
-    } catch (err) {
-        console.error('Delete user error:', err);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};  

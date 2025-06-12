@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
+    staffId: { 
+        type: String, 
+        unique: true,
+        required: true
+    },
     fullName: {
         type: String,
         required: true

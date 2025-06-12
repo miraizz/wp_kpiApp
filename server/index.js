@@ -15,13 +15,13 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.set('debug', true);
+// mongoose.set('debug', true);
 mongoose.connect(process.env.MONGODB_URI)
     .then(async () => {
         console.log('✅ MongoDB connected successfully!');
         const collections = await mongoose.connection.db.listCollections().toArray();
-        console.log('📚 Collections:', collections.map(c => c.name));
-        console.log('🔧 User collection:', User.collection.name);
+        // console.log('📚 Collections:', collections.map(c => c.name));
+        // console.log('🔧 User collection:', User.collection.name);
     })
     .catch(err => {
         console.error('❌ DB connection failed:', err);

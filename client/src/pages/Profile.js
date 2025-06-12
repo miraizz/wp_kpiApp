@@ -111,7 +111,7 @@ const Profile = () => {
         },
         body: JSON.stringify({ email: profile.email })
       });
-      
+
       const result = await res.json();
 
       if (!res.ok) return setNotification(result.error || '❌ Failed to deactivate');
@@ -163,6 +163,7 @@ const Profile = () => {
           <div className="profile-avatar">{getInitials(profile.fullName)}</div>
           <h3>{profile.fullName}</h3>
           <div className="details">
+            <p><strong>Staff ID:</strong> {profile.staffId}</p>
             <p><strong>Email:</strong> {profile.email}</p>
             <p><strong>Phone:</strong> {profile.phone || 'N/A'}</p>
             <p><strong>Department:</strong> {profile.department || 'N/A'}</p>

@@ -1,31 +1,39 @@
 const mongoose = require('mongoose');
 
 const assignedToSchema = new mongoose.Schema({
-    name: String,
-    staffId: String,
-    department: String
+    name: { type: String, required: true },
+    staffId: { type: String, required: true },
+    department: { type: String, required: true }
 }, { _id: false });
 
 const assignedBySchema = new mongoose.Schema({
-    name: String,
-    managerId: String
+    name: { type: String, required: true },
+    managerId: { type: String, required: true }
 }, { _id: false });
 
 const kpiSchema = new mongoose.Schema({
-    id: { type: String, unique: true }, // KPI-2025-001
-    title: String,
-    description: String,
-    category: String,
-    priority: { type: String, enum: ['Low', 'Medium', 'High'] },
-    progress: Number,
-    status: { type: String, enum: ['On Track', 'Behind', 'At Risk', 'Completed'] },
+    id: { type: String, unique: true, required: true }, // KPI-2025-001
+    title: { type: String, required: true },
+    description: { type: String, default: '' }, // optional
+    category: { type: String, default: 'General' },
+    priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'null' },
+    progress: { type: Number, default: 0, min: 0, max: 100 },
+    status: {
+        type: String,
+        enum: ['On Track', 'Behind', 'At Risk', 'Completed'],
+        default: 'null'
+    },
     submitted: { type: Boolean, default: false },
-    verifyStatus: { type: String, enum: ['Pending', 'Accepted', 'Rejected'], default: 'Pending' },
-    startDate: Date,
-    dueDate: Date,
-    assignedTo: assignedToSchema,
-    assignedBy: assignedBySchema,
-    evidence: String // could be a file path or URL
+    verifyStatus: {
+        type: String,
+        enum: ['Pending', 'Accepted', 'Rejected'],
+        default: 'Pending'
+    },
+    startDate: { type: Date, required: true },
+    dueDate: { type: Date, required: true },
+    assignedTo: { type: assignedToSchema, required: true },
+    assignedBy: { type: assignedBySchema, required: true },
+    evidence: { type: String, default: '' } // optional
 }, { timestamps: true });
 
-module.exports = mongoose.model('KPI', kpiSchema);
+module.exports = mongoose.model('KPI', kpiSchema, 'KPI');
