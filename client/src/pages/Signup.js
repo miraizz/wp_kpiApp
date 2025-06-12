@@ -4,6 +4,7 @@ import './Signup.css';
 
 const Signup = () => {
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -27,24 +28,26 @@ const Signup = () => {
     }
 
     try {
-      const res = await fetch('/api/signup', {
+      const res = await fetch('http://localhost:5050/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          fullName: form.fullName,
           email: form.email,
           password: form.password,
-          role: form.role
-          // You can also add fullName, department, phone if backend supports them
+          role: form.role,
+          department: form.department,
+          phone: form.phone
         })
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const { error } = await res.json();
-        alert(error || 'Registration failed.');
+        alert(data.error || 'Registration failed.');
         return;
       }
 
-      const data = await res.json();
       alert('Account created successfully!');
       sessionStorage.setItem("user", data.user.email);
       sessionStorage.setItem("email", data.user.email);
