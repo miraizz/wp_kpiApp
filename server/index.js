@@ -1,11 +1,15 @@
 const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
-const app = express();
-const PORT = process.env.PORT || 5050;
-require('dotenv').config();
+const dotenv = require('dotenv');
+const cors = require('cors');
+// const userRoutes = require('./routes/Auth');
 
-const User = require('./models/User');
+const PORT = process.env.PORT || 5050;
+
+dotenv.config();
+const app = express();
+
+const User = require('./models/userModel');
 
 // Middleware
 app.use(cors());
@@ -57,7 +61,7 @@ app.post('/api/test-post', (req, res) => {
     res.json({ ok: true });
 });
 
-app.post('/api/login', async (req, res) => {
+app.get('/api/login', async (req, res) => {
     console.log('🔥 Received POST /api/login');
     console.log('📦 Request body:', req.body);
 
