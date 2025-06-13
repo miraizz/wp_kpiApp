@@ -61,15 +61,27 @@ exports.createKPI = async (req, res) => {
  */
 exports.updateKPI = async (req, res) => {
     try {
-        const updated = await KPI.findOneAndUpdate(
-            { id: req.params.id },
-            req.body,
-            { new: true, runValidators: true }
-        );
-        if (!updated) {
-            return res.status(404).json({ error: 'KPI not found' });
-        }
-        res.json(updated);
+        const kpi = await KPI.findOne({ id: req.params.id });
+        if (!kpi) return res.status(404).json({ error: 'KPI not found' });
+
+        const {
+            progress,
+            status,
+            submitted,
+            verifyStatus,
+            comments,
+            evidenceFiles // Base64 files sent from frontend
+        } = req.body;
+
+        if (typeof progress !== 'undefined') kpi.progress = progress;
+        if (typeof status !== 'undefined') kpi.status = status;
+        if (typeof submitted !== 'undefined') kpi.submitted = submitted;
+        if (typeof verifyStatus !== 'undefined') kpi.verifyStatus = verifyStatus;
+        if (Array.isArray(comments)) kpi.comments = comments;
+        if (Array.isArray(evidenceFiles)) kpi.evidenceFiles = evidenceFiles;
+
+        await kpi.save();
+        res.json(kpi);
     } catch (err) {
         console.error('Error updating KPI:', err);
         res.status(500).json({ error: err.message || 'Internal server error' });
@@ -112,19 +124,23 @@ exports.verifyKPI = async (req, res) => {
         const { id } = req.params;
         const { status, comment } = req.body;
 
-        const updated = await KPI.findOneAndUpdate(
-            { id },
-            {
-                status,
-                verifyStatus: status === 'Accepted' ? 'Accepted' : 'Rejected',
-                comments: comment || '',
-            },
-            { new: true }
-        );
+        const kpi = await KPI.findOne({ id });
+        if (!kpi) return res.status(404).json({ error: 'KPI not found' });
 
-        if (!updated) return res.status(404).json({ error: 'KPI not found' });
+        kpi.verifyStatus = status === 'Accepted' ? 'Accepted' : 'Rejected';
 
-        res.json(updated);
+        if (comment) {
+            kpi.comments.push({
+                text: comment,
+                date: new Date(),
+                progress: 100,
+                isFinal: true,
+                by: 'Manager'
+            });
+        }
+
+        await kpi.save();
+        res.json(kpi);
     } catch (err) {
         console.error('Error verifying KPI:', err);
         res.status(500).json({ error: 'Internal server error' });
@@ -135,11 +151,10 @@ exports.getKPIsByStaffId = async (req, res) => {
     const { staffId } = req.params;
 
     try {
-        const kpis = await KPI.find({ 'assignedTo.staffId': staffId }); // ← FIXED CASE
+        const kpis = await KPI.find({ 'assignedTo.staffId': staffId });
         res.json(kpis);
     } catch (err) {
         console.error('Error fetching KPIs:', err);
         res.status(500).json({ error: 'Server error' });
     }
 };
-

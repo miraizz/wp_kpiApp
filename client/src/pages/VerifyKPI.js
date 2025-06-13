@@ -8,6 +8,7 @@ const VerifyKPI = () => {
   const [departments, setDepartments] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedKPI, setSelectedKPI] = useState(null);
+  const [finalComment, setFinalComment] = useState('');
   const dialogRef = useRef();
 
   useEffect(() => {
@@ -15,14 +16,11 @@ const VerifyKPI = () => {
       .then(res => res.json())
       .then(data => {
         const verifiedData = Array.isArray(data) ? data.filter(kpi =>
-          kpi.status === 'Completed' &&
-          kpi.progress === 100 &&
           kpi.submitted === true &&
           kpi.verifyStatus === 'Pending'
         ) : [];
         setKpis(verifiedData);
 
-        // Extract unique departments and categories
         const uniqueDepts = Array.from(new Set(data.map(k => k.assignedTo?.department).filter(Boolean)));
         const uniqueCats = Array.from(new Set(data.map(k => k.category).filter(Boolean)));
         setDepartments(uniqueDepts);
@@ -36,18 +34,26 @@ const VerifyKPI = () => {
 
   const openDetails = (kpi) => {
     setSelectedKPI(kpi);
+    setFinalComment('');
     dialogRef.current?.showModal();
   };
 
   const updateStatus = async (id, newStatus) => {
     try {
+      const newComment = {
+        text: finalComment,
+        date: new Date().toLocaleString(),
+        by: 'Manager',
+        isFinal: true
+      };
+
       const res = await fetch(`/api/kpi/verify/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           verifyStatus: newStatus,
-          comments: selectedKPI.comments || '',
-          status: newStatus === 'Accepted' ? 'Completed' : 'Rejected'
+          status: newStatus === 'Accepted' ? 'Completed' : 'Rejected',
+          comments: [...(selectedKPI.comments || []), newComment]
         })
       });
 
@@ -150,10 +156,19 @@ const VerifyKPI = () => {
             <p><strong>Status:</strong> {selectedKPI.status}</p>
             <p><strong>Verification Status:</strong> {selectedKPI.verifyStatus}</p>
 
-            {selectedKPI.evidence ? (
+            {selectedKPI.evidenceFiles && selectedKPI.evidenceFiles.length > 0 ? (
               <div className="evidence-section">
-                <p><strong>Evidence:</strong> {selectedKPI.evidence.split('/').pop()}</p>
-                <a href={selectedKPI.evidence} download className="download-btn">Download</a>
+                <h5>Evidence Files:</h5>
+                <ul>
+                  {selectedKPI.evidenceFiles.map((file, idx) => (
+                    <li key={idx}>
+                      <a href={file.data} download={file.filename}>
+                        {file.filename}
+                      </a>
+                      {/* <embed src={file.data} type={file.mimetype} width="100%" height="400px" /> */}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ) : (
               <p className="text-gray-400 italic text-sm">No evidence uploaded.</p>
@@ -164,10 +179,8 @@ const VerifyKPI = () => {
               <textarea
                 id="comment"
                 rows="3"
-                value={selectedKPI.comments || ''}
-                onChange={(e) =>
-                  setSelectedKPI({ ...selectedKPI, comments: e.target.value })
-                }
+                value={finalComment}
+                onChange={(e) => setFinalComment(e.target.value)}
                 placeholder="Write final remark before approval/rejection..."
               />
             </div>

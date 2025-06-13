@@ -11,10 +11,25 @@ const assignedBySchema = new mongoose.Schema({
     managerId: { type: String, required: true }
 }, { _id: false });
 
+const commentSchema = new mongoose.Schema({
+    text: { type: String, required: true },
+    date: { type: Date, default: Date.now },
+    progress: { type: Number, default: 0 },
+    isFinal: { type: Boolean, default: false },
+    by: { type: String, enum: ['Staff', 'Manager'], default: 'Staff' }
+}, { _id: false });
+
+const evidenceFileSchema = new mongoose.Schema({
+    filename: { type: String, required: true },
+    mimetype: { type: String, required: true },
+    uploadedAt: { type: Date, default: Date.now },
+    data: { type: String, required: true } // Base64-encoded file content
+}, { _id: false });
+
 const kpiSchema = new mongoose.Schema({
     id: { type: String, unique: true, required: true }, // KPI-2025-001
     title: { type: String, required: true },
-    description: { type: String, default: '' }, // optional
+    description: { type: String, default: '' },
     category: { type: String, default: 'General' },
     priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Low' },
     progress: { type: Number, default: 0, min: 0, max: 100 },
@@ -31,9 +46,12 @@ const kpiSchema = new mongoose.Schema({
     },
     startDate: { type: Date, required: true },
     dueDate: { type: Date, required: true },
+
     assignedTo: { type: assignedToSchema, required: true },
     assignedBy: { type: assignedBySchema, required: true },
-    evidence: { type: String, default: '' } // optional
+
+    comments: { type: [commentSchema], default: [] },
+    evidenceFiles: { type: [evidenceFileSchema], default: [] }
 }, { timestamps: true });
 
 module.exports = mongoose.model('KPI', kpiSchema, 'KPI');
