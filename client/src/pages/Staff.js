@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EvidenceUpload from '../components/EvidenceUpload';
 import ProgressUpdate from '../components/ProgressUpdate';
-import KPIDetailModal from '../components/KPIDetailModal';
+import KpiDetailModal from '../components/KpiDetailModal';
 import './Staff.css';
 
 function Staff() {
@@ -277,7 +277,7 @@ function Staff() {
         ))}
       </div>
 
-      <KPIDetailModal
+      <KpiDetailModal
         show={selectedKpi !== null}
         onClose={() => {
           setSelectedKpi(null);

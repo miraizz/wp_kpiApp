@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './KPIDetailModal.css'; // Import custom CSS
+import './KpiDetailModal.css'; // Import custom CSS
 
-function KPIDetailModal({ show, onClose, onSubmit, kpiDetails }) {
+function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
   const [selectedProgress, setSelectedProgress] = useState(0);
   const [currentProgress, setCurrentProgress] = useState(0);
   const [comment, setComment] = useState('');
@@ -364,4 +364,4 @@ function KPIDetailModal({ show, onClose, onSubmit, kpiDetails }) {
   );
 }
 
-export default KPIDetailModal;
+export default KpiDetailModal;
