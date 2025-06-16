@@ -16,6 +16,7 @@ const KPIManagement = () => {
   const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
+    // Fixed: Use consistent URL format
     fetch('/api/kpi')
       .then(res => res.json())
       .then(data => {
@@ -33,23 +34,26 @@ const KPIManagement = () => {
   const openForm = (edit = false, id = null) => {
     if (edit) {
       const kpi = kpis.find(k => k.id === id);
+      const toDateInputFormat = (dateStr) =>
+        dateStr ? dateStr.substring(0, 10) : '';
+
       if (!kpi) {
         console.error(`KPI with id ${id} not found`);
         return; // ✅ Prevent crash
       }
 
       setFormData({
-        title: kpi.title,
-        description: kpi.description,
-        staffId: kpi.assignedTo.staffId,
-        staffName: kpi.assignedTo.name,
-        department: kpi.assignedTo.department,
-        managerName: kpi.assignedBy.name,
-        managerId: kpi.assignedBy.managerId,
-        startDate: kpi.startDate,
-        endDate: kpi.dueDate,
-        category: kpi.category,
-        priority: kpi.priority
+        title: kpi.title || '',
+        description: kpi.description || '',
+        staffId: kpi.assignedTo?.staffId || '',
+        staffName: kpi.assignedTo?.name || '',
+        department: kpi.assignedTo?.department || '',
+        managerName: kpi.assignedBy?.name || '',
+        managerId: kpi.assignedBy?.managerId || '',
+        startDate: toDateInputFormat(kpi.startDate),
+        endDate: toDateInputFormat(kpi.dueDate),
+        category: kpi.category || '',
+        priority: kpi.priority || ''
       });
 
       setEditId(id);
@@ -97,6 +101,11 @@ const KPIManagement = () => {
       }
     };
 
+    // 🔥 Ensure _id is removed before PUT
+    if (isEditMode) {
+      delete payload._id;
+    }
+
     try {
       const res = await fetch(`http://localhost:5050${url}`, {
         method,
@@ -115,23 +124,43 @@ const KPIManagement = () => {
       );
 
       setIsPopupOpen(false);
+
+      // Update departments if new department was added
+      if (formData.department && !departments.includes(formData.department)) {
+        setDepartments(prev => [...prev, formData.department]);
+      }
+
     } catch (err) {
-      console.error(err.message);
+      console.error('Submit error:', err.message);
+      alert(`Error: ${err.message}`);
     }
   };
 
   const confirmDelete = async () => {
     try {
-      const res = await fetch(`/api/kpi/${confirmDeleteId}`, {
+      // Fixed: Use consistent URL format
+      const res = await fetch(`http://localhost:5050/api/kpi/${confirmDeleteId}`, {
         method: 'DELETE'
       });
 
-      if (!res.ok) throw new Error('Delete failed');
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Delete failed');
+      }
 
       setKpis(prev => prev.filter(kpi => kpi.id !== confirmDeleteId));
       setConfirmDeleteId(null);
+
+      // Update departments list after deletion
+      const remainingKpis = kpis.filter(kpi => kpi.id !== confirmDeleteId);
+      const uniqueDepts = Array.from(
+        new Set(remainingKpis.map(k => k.assignedTo?.department).filter(Boolean))
+      );
+      setDepartments(uniqueDepts);
+
     } catch (err) {
-      console.error(err.message);
+      console.error('Delete error:', err.message);
+      alert(`Error deleting KPI: ${err.message}`);
     }
   };
 
@@ -164,7 +193,6 @@ const KPIManagement = () => {
             </option>
           ))}
         </select>
-
       </div>
 
       <table className="kpi-table">
@@ -208,46 +236,120 @@ const KPIManagement = () => {
           <div className="modal-box">
             <h3>{isEditMode ? 'Edit KPI' : 'Assign New KPI'}</h3>
             <form onSubmit={handleSubmit} className="kpi-form">
-              <label>Title</label>
-              <input type="text" name="title" value={formData.title} onChange={handleChange} />
+              <label>Title *</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+              />
 
               <label>Description</label>
-              <input type="text" name="description" value={formData.description} onChange={handleChange} />
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows="3"
+              />
 
-              <label>Staff ID</label>
-              <input type="text" name="staffId" value={formData.staffId} onChange={handleChange} />
+              <label>Staff ID *</label>
+              <input
+                type="text"
+                name="staffId"
+                value={formData.staffId}
+                onChange={handleChange}
+                required
+              />
 
-              <label>Staff Name</label>
-              <input type="text" name="staffName" value={formData.staffName} onChange={handleChange} />
+              <label>Staff Name *</label>
+              <input
+                type="text"
+                name="staffName"
+                value={formData.staffName}
+                onChange={handleChange}
+                required
+              />
 
-              <label>Department</label>
-              <input type="text" name="department" value={formData.department} onChange={handleChange} />
+              <label>Department *</label>
+              <input
+                type="text"
+                name="department"
+                value={formData.department}
+                onChange={handleChange}
+                required
+              />
 
-              <label>Manager Name</label>
-              <input type="text" name="managerName" value={formData.managerName} onChange={handleChange} />
+              <label>Manager Name *</label>
+              <input
+                type="text"
+                name="managerName"
+                value={formData.managerName}
+                onChange={handleChange}
+                required
+              />
 
-              <label>Manager ID</label>
-              <input type="text" name="managerId" value={formData.managerId} onChange={handleChange} />
+              <label>Manager ID *</label>
+              <input
+                type="text"
+                name="managerId"
+                value={formData.managerId}
+                onChange={handleChange}
+                required
+              />
 
-              <label>Start Date</label>
-              <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} />
+              <label>Start Date *</label>
+              <input
+                type="date"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleChange}
+                required
+              />
 
-              <label>End Date</label>
-              <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
+              <label>End Date *</label>
+              <input
+                type="date"
+                name="endDate"
+                value={formData.endDate}
+                onChange={handleChange}
+                required
+              />
 
-              <label>Category</label>
-              <input type="text" name="category" value={formData.category} onChange={handleChange} />
+              <label>Category *</label>
+              <input
+                type="text"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                required
+              />
 
-              <label>Priority</label>
-              <select name="priority" value={formData.priority} onChange={handleChange}>
+              <label>Priority *</label>
+              <select
+                name="priority"
+                value={formData.priority}
+                onChange={handleChange}
+                required
+              >
                 <option value="">Select Priority</option>
                 <option value="High">High</option>
                 <option value="Medium">Medium</option>
                 <option value="Low">Low</option>
               </select>
 
-              <button type="submit" className="form-button green">{isEditMode ? 'Update KPI' : 'Assign KPI'}</button>
-              <button type="button" className="form-button red" onClick={() => setIsPopupOpen(false)}>Cancel</button>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button type="submit" className="form-button green">
+                  {isEditMode ? 'Update KPI' : 'Assign KPI'}
+                </button>
+                <button
+                  type="button"
+                  className="form-button red"
+                  onClick={() => setIsPopupOpen(false)}
+                >
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -264,31 +366,45 @@ const KPIManagement = () => {
                 <div>
                   <p><strong>Title:</strong> {kpi.title}</p>
                   <p><strong>Description:</strong> {kpi.description}</p>
-                  <p><strong>Staff:</strong> {kpi.assignedTo.name}</p>
-                  <p><strong>Staff ID:</strong> {kpi.assignedTo.staffId}</p>
-                  <p><strong>Department:</strong> {kpi.assignedTo.department}</p>
-                  <p><strong>Manager:</strong> {kpi.assignedBy.name}</p>
-                  <p><strong>Manager ID:</strong> {kpi.assignedBy.managerId}</p>
+                  <p><strong>Staff:</strong> {kpi.assignedTo?.name}</p>
+                  <p><strong>Staff ID:</strong> {kpi.assignedTo?.staffId}</p>
+                  <p><strong>Department:</strong> {kpi.assignedTo?.department}</p>
+                  <p><strong>Manager:</strong> {kpi.assignedBy?.name}</p>
+                  <p><strong>Manager ID:</strong> {kpi.assignedBy?.managerId}</p>
                   <p><strong>Start Date:</strong> {kpi.startDate?.substring(0, 10)}</p>
                   <p><strong>Due Date:</strong> {kpi.dueDate?.substring(0, 10)}</p>
                   <p><strong>Category:</strong> {kpi.category}</p>
                   <p><strong>Priority:</strong> {kpi.priority}</p>
+                  <p><strong>Status:</strong> {kpi.status}</p>
+                  <p><strong>Progress:</strong> {kpi.progress}%</p>
                 </div>
-              ) : null;
+              ) : (
+                <p>KPI not found</p>
+              );
             })()}
-            <button className="red-btn" onClick={() => setDetailsId(null)}>Close</button>
+            <button className="form-button red" onClick={() => setDetailsId(null)}>
+              Close
+            </button>
           </div>
         </div>
       )}
-      {/* 🆕 Delete Confirmation Modal */}
+
+      {/* Delete Confirmation Modal */}
       {confirmDeleteId && (
         <div className="modal-overlay">
           <div className="modal-box">
             <h3>Are you absolutely sure?</h3>
             <p>This action cannot be undone. This will permanently delete the KPI from the system.</p>
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-              <button className="form-button red" onClick={confirmDelete}>Yes, delete this KPI</button>
-              <button className="form-button green" onClick={() => setConfirmDeleteId(null)}>Cancel</button>
+              <button className="form-button red" onClick={confirmDelete}>
+                Yes, delete this KPI
+              </button>
+              <button
+                className="form-button green"
+                onClick={() => setConfirmDeleteId(null)}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>

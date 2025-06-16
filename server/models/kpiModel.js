@@ -54,4 +54,4 @@ const kpiSchema = new mongoose.Schema({
     evidenceFiles: { type: [evidenceFileSchema], default: [] }
 }, { timestamps: true });
 
-module.exports = mongoose.model('KPI', kpiSchema, 'KPI');
+module.exports = mongoose.model('KPI', kpiSchema, 'kpis');

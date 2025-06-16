@@ -70,15 +70,35 @@ exports.updateKPI = async (req, res) => {
             submitted,
             verifyStatus,
             comments,
-            evidenceFiles // Base64 files sent from frontend
+            evidenceFiles,
+            title,
+            description,
+            category,
+            priority,
+            startDate,
+            dueDate,
+            assignedTo,
+            assignedBy
         } = req.body;
 
         if (typeof progress !== 'undefined') kpi.progress = progress;
         if (typeof status !== 'undefined') kpi.status = status;
         if (typeof submitted !== 'undefined') kpi.submitted = submitted;
         if (typeof verifyStatus !== 'undefined') kpi.verifyStatus = verifyStatus;
-        if (Array.isArray(comments)) kpi.comments = comments;
+        if (Array.isArray(comments)) {
+            kpi.comments = [...(kpi.comments || []), ...comments];
+        }
         if (Array.isArray(evidenceFiles)) kpi.evidenceFiles = evidenceFiles;
+
+        // ⬇️ Add these for full form edit support
+        if (typeof title !== 'undefined') kpi.title = title;
+        if (typeof description !== 'undefined') kpi.description = description;
+        if (typeof category !== 'undefined') kpi.category = category;
+        if (typeof priority !== 'undefined') kpi.priority = priority;
+        if (typeof startDate !== 'undefined') kpi.startDate = startDate;
+        if (typeof dueDate !== 'undefined') kpi.dueDate = dueDate;
+        if (assignedTo) kpi.assignedTo = assignedTo;
+        if (assignedBy) kpi.assignedBy = assignedBy;
 
         await kpi.save();
         res.json(kpi);
@@ -87,6 +107,7 @@ exports.updateKPI = async (req, res) => {
         res.status(500).json({ error: err.message || 'Internal server error' });
     }
 };
+
 
 /**
  * DELETE /api/kpi/:id
@@ -124,26 +145,44 @@ exports.verifyKPI = async (req, res) => {
         const { id } = req.params;
         const { status, comment } = req.body;
 
+        console.log('VERIFY BODY:', { id, status, comment });
+
         const kpi = await KPI.findOne({ id });
         if (!kpi) return res.status(404).json({ error: 'KPI not found' });
 
-        kpi.verifyStatus = status === 'Accepted' ? 'Accepted' : 'Rejected';
+        // Ensure status is valid
+        if (!['Accepted', 'Rejected'].includes(status)) {
+            return res.status(400).json({ error: 'Invalid verification status' });
+        }
 
-        if (comment) {
-            kpi.comments.push({
-                text: comment,
+        // Set status
+        kpi.verifyStatus = status;
+
+        // Add manager comment if provided
+        if (comment && comment.trim()) {
+            const newComment = {
+                text: comment.trim(),
                 date: new Date(),
                 progress: 100,
                 isFinal: true,
                 by: 'Manager'
-            });
+            };
+
+            // Validate before pushing
+            if (!newComment.text) {
+                return res.status(400).json({ error: 'Final comment is required' });
+            }
+
+            // Ensure comments array exists
+            kpi.comments = Array.isArray(kpi.comments) ? kpi.comments : [];
+            kpi.comments.push(newComment);
         }
 
         await kpi.save();
-        res.json(kpi);
+        res.status(200).json(kpi);
     } catch (err) {
         console.error('Error verifying KPI:', err);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: err.message || 'Internal server error' });
     }
 };
 

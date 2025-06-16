@@ -50,12 +50,46 @@ function Staff() {
     return 'Behind';
   };
 
-  const handleProgressSubmit = (index, newValue) => {
+  const handleProgressSubmit = async (index, newValue) => {
     const updated = [...kpis];
-    updated[index].progress = newValue;
-    updated[index].status = getStatusFromProgress(newValue);
-    setKpis(updated);
-    setActiveProgressIndex(null);
+    const kpi = updated[index];
+
+    const comment = {
+      text: `Progress updated to ${newValue}%`,
+      date: new Date().toISOString(),
+      progress: newValue,
+      isFinal: false,
+      by: 'Staff'
+    };
+
+    kpi.progress = newValue;
+    kpi.status = getStatusFromProgress(newValue);
+    kpi.comments = Array.isArray(kpi.comments) ? [...kpi.comments, comment] : [comment];
+
+    // 🔥 Save to DB
+    try {
+      const response = await fetch(`/api/kpi/${kpi.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          progress: newValue,
+          status: kpi.status,
+          comments: kpi.comments
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update KPI');
+      }
+
+      const updatedKPI = await response.json();
+      updated[index] = updatedKPI;
+      setKpis(updated);
+      setActiveProgressIndex(null);
+    } catch (err) {
+      console.error('Error updating progress:', err);
+      alert('Error updating KPI progress.');
+    }
   };
 
   const handleEvidenceUpload = (index, file) => {

@@ -40,29 +40,30 @@ const VerifyKPI = () => {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      const newComment = {
-        text: finalComment,
-        date: new Date().toLocaleString(),
-        by: 'Manager',
-        isFinal: true
-      };
+      console.log('Submitting verification for KPI:', id, '→', newStatus);
 
-      const res = await fetch(`/api/kpi/verify/${id}`, {
+      const res = await fetch(`http://localhost:5050/api/kpi/verify/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          verifyStatus: newStatus,
-          status: newStatus === 'Accepted' ? 'Completed' : 'Rejected',
-          comments: [...(selectedKPI.comments || []), newComment]
+          status: newStatus,
+          comment: finalComment
         })
       });
 
-      if (!res.ok) throw new Error('Failed to update KPI');
+      const data = await res.json();
 
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to update KPI');
+      }
+
+      // Remove verified KPI from list
       setKpis(prev => prev.filter(kpi => kpi.id !== id));
       dialogRef.current?.close();
+      alert(`KPI has been ${newStatus.toLowerCase()} successfully.`);
     } catch (err) {
-      console.error(err.message);
+      console.error('Verification error:', err.message);
+      alert('Error: ' + err.message);
     }
   };
 
@@ -156,13 +157,18 @@ const VerifyKPI = () => {
             <p><strong>Status:</strong> {selectedKPI.status}</p>
             <p><strong>Verification Status:</strong> {selectedKPI.verifyStatus}</p>
 
-            {selectedKPI.evidenceFiles && selectedKPI.evidenceFiles.length > 0 ? (
+            {selectedKPI.evidenceFiles?.length > 0 ? (
               <div className="evidence-section">
                 <h5>Evidence Files:</h5>
                 <ul>
                   {selectedKPI.evidenceFiles.map((file, idx) => (
                     <li key={idx}>
-                      <a href={file.data} download={file.filename}>
+                      <a
+                        href={`data:${file.mimetype};base64,${file.data}`}
+                        download={file.filename}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {file.filename}
                       </a>
                       {/* <embed src={file.data} type={file.mimetype} width="100%" height="400px" /> */}
@@ -174,6 +180,21 @@ const VerifyKPI = () => {
               <p className="text-gray-400 italic text-sm">No evidence uploaded.</p>
             )}
 
+            {/* Display comments if any */}
+            {selectedKPI.comments?.length > 0 && (
+              <div className="comment-history">
+                <h5>Previous Comments:</h5>
+                <ul>
+                  {selectedKPI.comments.map((comment, idx) => (
+                    <li key={idx}>
+                      <p><strong>{comment.by}</strong> ({new Date(comment.date).toLocaleString()}):</p>
+                      <p>{comment.text}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {/* Final comment input for verification */}
             <div className="comment-section">
               <label htmlFor="comment"><strong>Final Comment:</strong></label>
               <textarea
@@ -186,8 +207,20 @@ const VerifyKPI = () => {
             </div>
 
             <div className="actions">
-              <button onClick={() => updateStatus(selectedKPI.id, 'Accepted')} className="accept">Accept</button>
-              <button onClick={() => updateStatus(selectedKPI.id, 'Rejected')} className="reject">Reject</button>
+              <button
+                disabled={!finalComment.trim()}
+                onClick={() => updateStatus(selectedKPI.id, 'Accepted')}
+                className="accept"
+              >
+                Accept
+              </button>
+              <button
+                disabled={!finalComment.trim()}
+                onClick={() => updateStatus(selectedKPI.id, 'Rejected')}
+                className="reject"
+              >
+                Reject
+              </button>
               <button onClick={() => dialogRef.current?.close()} className="back-button">Close</button>
             </div>
           </div>
