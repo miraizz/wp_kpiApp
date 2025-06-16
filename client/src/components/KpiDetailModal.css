@@ -192,11 +192,51 @@
 
 /* Submitted Message Styles */
 .submitted-message {
-  background-color: #e3f2fd;
-  border-left: 4px solid #2196f3;
-  color: #0d47a1;
-  padding: 16px;
-  margin-top: 16px;
+  padding: 15px;
+  border-radius: 4px;
+  margin: 15px 0;
+}
+
+.verified-message {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rejected-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pending-message {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.verified-icon {
+  color: #28a745;
+  font-size: 20px;
+}
+
+.rejected-icon {
+  color: #dc3545;
+  font-size: 20px;
+}
+
+.pending-icon {
+  color: #ffc107;
+  font-size: 20px;
 }
 
 /* Form Styles */
@@ -378,4 +418,56 @@
   margin-top: 12px;
   margin-bottom: 8px;
   color: #333;
+}
+
+.selected-files {
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.selected-files ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.selected-files li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.selected-files li:last-child {
+  border-bottom: none;
+}
+
+.remove-file-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 5px;
+}
+
+.remove-file-btn:hover {
+  color: #c82333;
+}
+
+.clear-files-btn {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.clear-files-btn:hover {
+  background-color: #5a6268;
 }

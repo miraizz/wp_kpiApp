@@ -44,12 +44,24 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
   // Get the latest progress for display
   const displayProgress = comments.length > 0 ? comments[comments.length - 1].progress : currentProgress;
 
+  // Get clean title without verification status
+  const cleanTitle = kpiDetails.title.replace(/\s*Verified$/, '');
+
   const handleProgressChange = (newProgress) => {
     setSelectedProgress(newProgress);
   };
 
   const handleFileChange = (e) => {
     setFiles(Array.from(e.target.files));
+  };
+
+  const handleClearSelectedFiles = () => {
+    setFiles([]);
+    // Reset the file input
+    const fileInput = document.querySelector('.file-input');
+    if (fileInput) {
+      fileInput.value = '';
+    }
   };
 
   const handleEvidenceUpload = async () => {
@@ -277,7 +289,7 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
         <div className="modal-body">
           {/* KPI Details Header */}
           <div className="kpi-details-header">
-            <h5>{kpiDetails.title}</h5>
+            <h5>{cleanTitle}</h5>
             <p className="kpi-description">{kpiDetails.description}</p>
             <div className="kpi-info-row">
               <span>Category: <strong>{kpiDetails.category}</strong></span>
@@ -305,11 +317,11 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
           )}
 
           {/* Progress Display - Show actual KPI progress */}
-          <h6>Current Progress: {displayProgress}%</h6>
+          <h6>Current Progress: {currentProgress}%</h6>
           <div className="progress-container">
             <div
-              className={`progress-bar ${displayProgress === 100 ? 'progress-complete' : ''}`}
-              style={{ width: `${displayProgress}%` }}>
+              className={`progress-bar ${currentProgress === 100 ? 'progress-complete' : ''}`}
+              style={{ width: `${currentProgress}%` }}>
             </div>
           </div>
 
@@ -339,7 +351,22 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
           {/* Display submitted message or edit controls */}
           {isSubmitted ? (
             <div className="submitted-message">
-              Your KPI has been submitted. Please wait for verification.
+              {kpiDetails.verifyStatus === 'Accepted' ? (
+                <div className="verified-message">
+                  <span className="verified-icon">✓</span>
+                  Your KPI has been verified and approved by the manager.
+                </div>
+              ) : kpiDetails.verifyStatus === 'Rejected' ? (
+                <div className="rejected-message">
+                  <span className="rejected-icon">✕</span>
+                  Your KPI submission has been rejected. Please check with your manager for details.
+                </div>
+              ) : (
+                <div className="pending-message">
+                  <span className="pending-icon">⏳</span>
+                  Your KPI has been submitted. Please wait for verification.
+                </div>
+              )}
             </div>
           ) : (
             <>
@@ -394,8 +421,35 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
                     multiple
                     onChange={handleFileChange}
                     className="file-input"
-                    value={''} // always clear input after upload/clear
                   />
+                  {files.length > 0 && (
+                    <div className="selected-files">
+                      <p>Selected files:</p>
+                      <ul>
+                        {files.map((file, index) => (
+                          <li key={index}>
+                            {file.name}
+                            <button 
+                              className="remove-file-btn"
+                              onClick={() => {
+                                const newFiles = [...files];
+                                newFiles.splice(index, 1);
+                                setFiles(newFiles);
+                              }}
+                            >
+                              ×
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      <button 
+                        className="clear-files-btn"
+                        onClick={handleClearSelectedFiles}
+                      >
+                        Clear All Files
+                      </button>
+                    </div>
+                  )}
                   <button
                     className={`upload-btn ${files.length === 0 || isUploading ? 'disabled' : ''}`}
                     onClick={handleEvidenceUpload}
