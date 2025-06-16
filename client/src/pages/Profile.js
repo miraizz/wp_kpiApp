@@ -7,7 +7,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('view');
   const [notification, setNotification] = useState('');
-  const [profile, setProfile] = useState(null); // null initially to check for loading state
+  const [profile, setProfile] = useState('');
   const [passwords, setPasswords] = useState({
     current: '',
     new: '',
@@ -15,13 +15,29 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    const email = sessionStorage.getItem('email');
-    if (!email) {
-      setNotification('⚠️ No email found in session');
+    // Retrieve user data the same way as stored in Login page
+    const storedUser = sessionStorage.getItem('user');
+
+    if (!storedUser) {
+      setNotification('⚠️ No user data found in session');
       return;
     }
 
-    fetch(`/api/profile?email=${encodeURIComponent(email)}`)
+    let userData;
+    try {
+      userData = JSON.parse(storedUser);
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      setNotification('⚠️ Invalid user data in session');
+      return;
+    }
+
+    if (!userData.email) {
+      setNotification('⚠️ No email found in user data');
+      return;
+    }
+
+    fetch(`/api/profile?email=${encodeURIComponent(userData.email)}`)
       .then(res => res.json())
       .then(data => {
         if (data.user) {
@@ -63,11 +79,17 @@ const Profile = () => {
       if (!res.ok) return setNotification(data.error || '❌ Failed to update profile');
 
       setProfile(data.user);
-      sessionStorage.setItem('name', data.user.fullName);
-      sessionStorage.setItem('email', data.user.email);
-      sessionStorage.setItem('phone', data.user.phone);
-      sessionStorage.setItem('department', data.user.department);
-      sessionStorage.setItem('role', data.user.role);
+
+      // Update the stored user object with new profile data
+      const updatedUser = {
+        email: data.user.email,
+        role: data.user.role,
+        staffId: data.user.staffId,
+        name: data.user.fullName,
+        phone: data.user.phone,
+        department: data.user.department
+      };
+      sessionStorage.setItem('user', JSON.stringify(updatedUser));
 
       setNotification('✅ Profile updated successfully');
     } catch {
