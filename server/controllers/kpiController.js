@@ -61,8 +61,17 @@ exports.createKPI = async (req, res) => {
  */
 exports.updateKPI = async (req, res) => {
     try {
+        console.log('Update KPI request received:', {
+            id: req.params.id,
+            hasEvidenceFiles: Array.isArray(req.body.evidenceFiles),
+            evidenceFilesCount: req.body.evidenceFiles?.length
+        });
+
         const kpi = await KPI.findOne({ id: req.params.id });
-        if (!kpi) return res.status(404).json({ error: 'KPI not found' });
+        if (!kpi) {
+            console.log('KPI not found:', req.params.id);
+            return res.status(404).json({ error: 'KPI not found' });
+        }
 
         const {
             progress,
@@ -81,16 +90,68 @@ exports.updateKPI = async (req, res) => {
             assignedBy
         } = req.body;
 
-        if (typeof progress !== 'undefined') kpi.progress = progress;
-        if (typeof status !== 'undefined') kpi.status = status;
+        // Validate progress if provided
+        if (typeof progress !== 'undefined') {
+            if (progress < 0 || progress > 100) {
+                console.log('Invalid progress value:', progress);
+                return res.status(400).json({ error: 'Progress must be between 0 and 100' });
+            }
+            kpi.progress = progress;
+            console.log('Updated progress:', progress);
+        }
+
+        // Validate status if provided
+        if (typeof status !== 'undefined') {
+            const validStatuses = ['On Track', 'Behind', 'At Risk', 'Completed'];
+            if (!validStatuses.includes(status)) {
+                console.log('Invalid status value:', status);
+                return res.status(400).json({ error: 'Invalid status value' });
+            }
+            kpi.status = status;
+            console.log('Updated status:', status);
+        }
+
         if (typeof submitted !== 'undefined') kpi.submitted = submitted;
         if (typeof verifyStatus !== 'undefined') kpi.verifyStatus = verifyStatus;
+        
+        // Update comments if provided
         if (Array.isArray(comments)) {
-            kpi.comments = [...(kpi.comments || []), ...comments];
+            kpi.comments = comments;
+            console.log('Updated comments:', comments.length);
         }
-        if (Array.isArray(evidenceFiles)) kpi.evidenceFiles = evidenceFiles;
 
-        // ⬇️ Add these for full form edit support
+        // Update evidence files if provided
+        if (Array.isArray(evidenceFiles)) {
+            console.log('Updating evidence files:', evidenceFiles.length);
+            // Validate each evidence file
+            const validFiles = evidenceFiles.every(file => {
+                console.log('Validating file:', {
+                    filename: file.filename,
+                    mimetype: file.mimetype,
+                    dataLength: file.data?.length,
+                    dataStart: file.data?.substring(0, 20),
+                    dataEnd: file.data?.substring(file.data.length - 20),
+                    isValidBase64: /^[A-Za-z0-9+/=]+$/.test(file.data),
+                    isValidLength: file.data?.length % 4 === 0
+                });
+                return file.filename && 
+                       file.mimetype && 
+                       file.data && 
+                       file.uploadedAt &&
+                       /^[A-Za-z0-9+/=]+$/.test(file.data) &&
+                       file.data.length % 4 === 0;
+            });
+
+            if (!validFiles) {
+                console.log('Invalid evidence file format detected');
+                return res.status(400).json({ error: 'Invalid evidence file format' });
+            }
+
+            kpi.evidenceFiles = evidenceFiles;
+            console.log('Evidence files updated successfully');
+        }
+
+        // Update other fields if provided
         if (typeof title !== 'undefined') kpi.title = title;
         if (typeof description !== 'undefined') kpi.description = description;
         if (typeof category !== 'undefined') kpi.category = category;
@@ -100,11 +161,33 @@ exports.updateKPI = async (req, res) => {
         if (assignedTo) kpi.assignedTo = assignedTo;
         if (assignedBy) kpi.assignedBy = assignedBy;
 
-        await kpi.save();
-        res.json(kpi);
+        console.log('Saving KPI with updates:', {
+            id: kpi.id,
+            progress: kpi.progress,
+            status: kpi.status,
+            commentsCount: kpi.comments.length,
+            evidenceFilesCount: kpi.evidenceFiles.length
+        });
+
+        // Save the updated KPI
+        const updatedKPI = await kpi.save();
+        
+        console.log('KPI saved successfully:', {
+            id: updatedKPI.id,
+            progress: updatedKPI.progress,
+            status: updatedKPI.status,
+            evidenceFilesCount: updatedKPI.evidenceFiles.length
+        });
+
+        // Return the updated KPI
+        res.json(updatedKPI);
     } catch (err) {
         console.error('Error updating KPI:', err);
-        res.status(500).json({ error: err.message || 'Internal server error' });
+        console.error('Error stack:', err.stack);
+        res.status(500).json({ 
+            error: err.message || 'Internal server error',
+            details: err.stack
+        });
     }
 };
 
@@ -162,7 +245,7 @@ exports.verifyKPI = async (req, res) => {
         if (comment && comment.trim()) {
             const newComment = {
                 text: comment.trim(),
-                date: new Date(),
+                date: new Date().toISOString(),
                 progress: 100,
                 isFinal: true,
                 by: 'Manager'

@@ -13,7 +13,12 @@ const assignedBySchema = new mongoose.Schema({
 
 const commentSchema = new mongoose.Schema({
     text: { type: String, required: true },
-    date: { type: Date, default: Date.now },
+    date: { 
+        type: Date, 
+        default: Date.now,
+        get: (date) => date ? date.toISOString() : null,
+        set: (date) => date ? new Date(date) : new Date()
+    },
     progress: { type: Number, default: 0 },
     isFinal: { type: Boolean, default: false },
     by: { type: String, enum: ['Staff', 'Manager'], default: 'Staff' }
@@ -23,7 +28,17 @@ const evidenceFileSchema = new mongoose.Schema({
     filename: { type: String, required: true },
     mimetype: { type: String, required: true },
     uploadedAt: { type: Date, default: Date.now },
-    data: { type: String, required: true } // Base64-encoded file content
+    data: { 
+        type: String, 
+        required: true,
+        validate: {
+            validator: function(v) {
+                // Check if the string is a valid base64 string
+                return /^[A-Za-z0-9+/=]+$/.test(v);
+            },
+            message: 'Invalid base64 data format'
+        }
+    }
 }, { _id: false });
 
 const kpiSchema = new mongoose.Schema({

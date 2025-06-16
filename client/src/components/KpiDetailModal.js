@@ -12,24 +12,37 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
   const [successMessage, setSuccessMessage] = useState('');
   const [showEvidenceSection, setShowEvidenceSection] = useState(false);
   const [evidenceUploaded, setEvidenceUploaded] = useState(false);
+  const [evidenceError, setEvidenceError] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (kpiDetails) {
-      setSelectedProgress(kpiDetails.progress || 0);
-      setCurrentProgress(kpiDetails.progress || 0);
+      // Get the latest progress from comments or use the KPI's progress
+      const latestComment = kpiDetails.comments && kpiDetails.comments.length > 0 
+        ? kpiDetails.comments[kpiDetails.comments.length - 1]
+        : null;
+      
+      const latestProgress = latestComment ? latestComment.progress : (kpiDetails.progress || 0);
+      
+      setSelectedProgress(latestProgress);
+      setCurrentProgress(latestProgress);
       setComment('');
       setFiles([]);
       setHasEvidence(kpiDetails.evidenceFiles && kpiDetails.evidenceFiles.length > 0);
       setComments(kpiDetails.comments || []);
       setShowSuccessAlert(false);
-      setShowEvidenceSection(kpiDetails.progress === 100);
-      setEvidenceUploaded(false);
+      setShowEvidenceSection(latestProgress === 100 && !kpiDetails.submitted);
+      setEvidenceUploaded(kpiDetails.evidenceFiles && kpiDetails.evidenceFiles.length > 0);
     }
   }, [kpiDetails]);
 
   if (!kpiDetails) return null;
 
-  const isSubmitted = kpiDetails.submitted === true;
+  // Update isSubmitted check to also verify progress and evidence
+  const isSubmitted = kpiDetails.submitted === true && kpiDetails.progress === 100 && kpiDetails.evidenceFiles && kpiDetails.evidenceFiles.length > 0;
+
+  // Get the latest progress for display
+  const displayProgress = comments.length > 0 ? comments[comments.length - 1].progress : currentProgress;
 
   const handleProgressChange = (newProgress) => {
     setSelectedProgress(newProgress);
@@ -41,16 +54,28 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
 
   const handleEvidenceUpload = async () => {
     if (files.length > 0) {
+      setIsUploading(true);
+      setEvidenceError('');
       try {
+        console.log('Starting evidence upload with files:', files.length);
+
         const base64Files = await Promise.all(files.map(file => {
           return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.onload = () => resolve({
-              filename: file.name,
-              mimetype: file.type,
-              data: reader.result
-            });
-            reader.onerror = reject;
+            reader.onload = () => {
+              // Extract the base64 data without the data URL prefix
+              const base64Data = reader.result.split(',')[1];
+              resolve({
+                filename: file.name,
+                mimetype: file.type,
+                data: base64Data,
+                uploadedAt: new Date().toISOString()
+              });
+            };
+            reader.onerror = (error) => {
+              console.error('Error reading file:', error);
+              reject(error);
+            };
             reader.readAsDataURL(file);
           });
         }));
@@ -58,22 +83,47 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
         const response = await fetch(`/api/kpi/${kpiDetails.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ evidenceFiles: base64Files })
+          body: JSON.stringify({ 
+            evidenceFiles: base64Files,
+            progress: currentProgress
+          })
         });
 
-        if (!response.ok) throw new Error('Failed to upload evidence');
+        const responseData = await response.json();
+        if (!response.ok) {
+          throw new Error(responseData.error || 'Failed to upload evidence');
+        }
 
-        const updated = await response.json();
-        setHasEvidence(updated.evidenceFiles?.length > 0);
+        setHasEvidence(true);
         setEvidenceUploaded(true);
         setFiles([]);
         setSuccessMessage('Evidence uploaded successfully! Now you can submit your KPI.');
         setShowSuccessAlert(true);
+        setEvidenceError('');
+        // Notify parent component
+        const updatedKpi = await fetch(`/api/kpi/${kpiDetails.id}`).then(res => res.json());
+        if (onSubmit) {
+          onSubmit({
+            type: 'evidence',
+            evidence: base64Files,
+            updatedKpi
+          });
+        }
       } catch (error) {
         console.error('Failed to upload evidence:', error);
-        alert('Error uploading evidence. Please try again.');
+        setEvidenceError(error.message || 'Error uploading evidence. Please try again.');
+        setHasEvidence(false);
+        setEvidenceUploaded(false);
+      } finally {
+        setIsUploading(false);
       }
     }
+  };
+
+  const handleClearEvidence = () => {
+    setFiles([]);
+    setEvidenceError('');
+    setIsUploading(false);
   };
 
   const handleProgressSubmit = async () => {
@@ -83,27 +133,45 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
 
     const newComment = {
       text: comment,
-      date: new Date().toLocaleString(),
+      date: new Date().toISOString(),
       progress: selectedProgress,
       by: 'Staff'
     };
 
     const updatedComments = [...comments, newComment];
-    setComments(updatedComments);
-    setCurrentProgress(selectedProgress);
 
     try {
+      console.log('Sending update request with:', {
+        id: kpiDetails.id,
+        progress: selectedProgress,
+        comments: updatedComments,
+        status: getStatusFromProgress(selectedProgress)
+      });
+
+      // Make the API call first
       const response = await fetch(`/api/kpi/${kpiDetails.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           progress: selectedProgress,
-          comments: updatedComments
+          comments: updatedComments,
+          status: getStatusFromProgress(selectedProgress)
         })
       });
 
-      if (!response.ok) throw new Error('Failed to update progress');
+      console.log('Response status:', response.status);
+      const responseData = await response.json();
+      console.log('Response data:', responseData);
 
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Failed to update KPI');
+      }
+
+      // Update local state only after successful API call
+      setComments(updatedComments);
+      setCurrentProgress(selectedProgress);
+
+      // Update local state
       if (selectedProgress === 100) {
         setShowEvidenceSection(true);
         setSuccessMessage('Progress updated to 100%. Please upload evidence next.');
@@ -113,24 +181,49 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
         setSuccessMessage('Progress updated successfully.');
       }
 
+      // Notify parent component of the update
+      if (onSubmit) {
+        onSubmit({
+          type: 'progress',
+          progress: selectedProgress,
+          comments: updatedComments,
+          comment: comment
+        });
+      }
+
       setShowSuccessAlert(true);
       setComment('');
     } catch (error) {
       console.error('Error updating progress:', error);
-      alert('Failed to update progress. Please try again.');
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack
+      });
+      alert(`Failed to update progress: ${error.message}`);
     }
   };
 
+  const getStatusFromProgress = (progress) => {
+    if (progress === 100) return 'Completed';
+    if (progress >= 60) return 'On Track';
+    if (progress === 40) return 'At Risk';
+    return 'Behind';
+  };
+
   const handleKpiSubmit = async () => {
+    if (currentProgress !== 100) {
+      return alert('Progress must be 100% before submitting.');
+    }
+    
     if (!evidenceUploaded) {
       return alert('Please upload evidence before submitting.');
     }
 
-    const finalCommentText = comments.length > 0 ? comments[comments.length - 1].text : '';
+    const finalCommentText = comments.length > 0 ? comments[comments.length - 1].text : 'Final submission';
 
     const finalComment = {
       text: finalCommentText,
-      date: new Date().toLocaleString(),
+      date: new Date().toISOString(),
       progress: 100,
       isFinal: true,
       by: 'Staff'
@@ -145,6 +238,7 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
         body: JSON.stringify({
           submitted: true,
           verifyStatus: 'Pending',
+          progress: 100,
           comments: updatedComments
         })
       });
@@ -154,6 +248,7 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
       setComments(updatedComments);
       setSuccessMessage('KPI submitted successfully and is now pending verification.');
       setShowSuccessAlert(true);
+      setShowEvidenceSection(false); // Hide evidence section after submission
     } catch (error) {
       console.error('Error submitting KPI:', error);
       alert('Failed to submit KPI. Please try again.');
@@ -210,11 +305,11 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
           )}
 
           {/* Progress Display - Show actual KPI progress */}
-          <h6>Current Progress: {kpiDetails.progress || 0}%</h6>
+          <h6>Current Progress: {displayProgress}%</h6>
           <div className="progress-container">
             <div
-              className={`progress-bar ${(kpiDetails.progress || 0) === 100 ? 'progress-complete' : ''}`}
-              style={{ width: `${kpiDetails.progress || 0}%` }}>
+              className={`progress-bar ${displayProgress === 100 ? 'progress-complete' : ''}`}
+              style={{ width: `${displayProgress}%` }}>
             </div>
           </div>
 
@@ -299,21 +394,29 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
                     multiple
                     onChange={handleFileChange}
                     className="file-input"
+                    value={''} // always clear input after upload/clear
                   />
                   <button
-                    className={`upload-btn ${files.length === 0 ? 'disabled' : ''}`}
+                    className={`upload-btn ${files.length === 0 || isUploading ? 'disabled' : ''}`}
                     onClick={handleEvidenceUpload}
-                    disabled={files.length === 0}>
-                    Upload Evidence
+                    disabled={files.length === 0 || isUploading}>
+                    {isUploading ? 'Uploading...' : 'Upload Evidence'}
                   </button>
-
+                  {evidenceError && (
+                    <div className="alert alert-danger" style={{ marginTop: 8 }}>
+                      {evidenceError}
+                      <button className="close-alert" onClick={handleClearEvidence} style={{ marginLeft: 8 }}>
+                        Clear
+                      </button>
+                    </div>
+                  )}
                   {hasEvidence && (
                     <div className="evidence-list">
                       <label>Uploaded Files:</label>
                       <ul>
                         {(kpiDetails.evidenceFiles || []).map((file, idx) => (
                           <li key={idx}>
-                            <a href={file.data} download={file.filename}>
+                            <a href={`data:${file.mimetype};base64,${file.data}`} download={file.filename}>
                               {file.filename}
                             </a>
                           </li>
@@ -321,7 +424,6 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
                       </ul>
                     </div>
                   )}
-
                   {hasEvidence && <small className="success-text">✓ Evidence uploaded</small>}
                 </div>
               )}

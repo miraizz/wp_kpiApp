@@ -108,20 +108,55 @@ function Staff() {
 
     const updatedKPIs = [...kpis];
     const kpiIndex = updatedKPIs.findIndex(k => k.id === selectedKpi.id);
-    const kpi = updatedKPIs[selectedKpiIndex];
+    
+    if (kpiIndex === -1) return;
+
+    const kpi = updatedKPIs[kpiIndex];
 
     if (data.type === 'progress') {
-      // Update progress
-      kpi.progress = data.progress;
-      kpi.comments = data.comments;
-      kpi.status = data.progress === 100 ? 'Completed' : 'In Progress';
-      kpi.status = getStatusFromProgress(data.progress);
-      if (data.comment) {
-        kpi.comments.push({
-          text: data.comment,
-          date: new Date().toLocaleString(),
+      try {
+        console.log('Updating KPI with data:', {
+          id: kpi.id,
           progress: data.progress,
+          comments: data.comments,
+          status: getStatusFromProgress(data.progress)
         });
+
+        // Update the KPI in the backend
+        const response = await fetch(`/api/kpi/${kpi.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            progress: data.progress,
+            comments: data.comments,
+            status: getStatusFromProgress(data.progress)
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Server error response:', errorData);
+          throw new Error(errorData.error || 'Failed to update KPI');
+        }
+
+        // Get the updated KPI from the response
+        const updatedKPI = await response.json();
+        console.log('Server response:', updatedKPI);
+        
+        // Update progress
+        kpi.progress = data.progress;
+        kpi.comments = data.comments;
+        kpi.status = getStatusFromProgress(data.progress);
+        
+        // Update the KPI in the array
+        updatedKPIs[kpiIndex] = kpi;
+        setKpis(updatedKPIs);
+        
+        // Update selected KPI to reflect changes
+        setSelectedKpi({ ...kpi });
+      } catch (error) {
+        console.error('Error updating KPI:', error);
+        alert('Failed to update KPI. Please try again.');
       }
     } else if (data.type === 'evidence') {
       const kpi = updatedKPIs[selectedKpiIndex];
