@@ -140,7 +140,12 @@ const VerifyKPI = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="7">No results found.</td>
+              <td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>
+                <div style={{ color: '#666', fontSize: '1.1rem' }}>
+                  <p style={{ marginBottom: '0.5rem' }}>No KPIs pending verification at the moment.</p>
+                  <p style={{ fontSize: '0.9rem', color: '#888' }}>Staff members will need to submit their completed KPIs for verification first.</p>
+                </div>
+              </td>
             </tr>
           )}
         </tbody>

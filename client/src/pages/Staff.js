@@ -251,12 +251,30 @@ function Staff() {
 
       {/* KPI Stats Cards */}
       <div className="summary-cards">
-        <div className="summary-card"><div className="summary-card-title">Total KPIs</div><div className="summary-card-value total-kpis">{totalKpis}</div></div>
-        <div className="summary-card"><div className="summary-card-title">On Track</div><div className="summary-card-value on-track">{onTrack}</div></div>
-        <div className="summary-card"><div className="summary-card-title">Needs Attention</div><div className="summary-card-value at-risk">{needsAttention}</div></div>
-        <div className="summary-card"><div className="summary-card-title">Completed</div><div className="summary-card-value completed-kpi">{completed}</div></div>
-        <div className="summary-card"><div className="summary-card-title">Incomplete</div><div className="summary-card-value incomplete-kpi">{incomplete}</div></div>
-        <div className="summary-card"><div className="summary-card-title">Verified</div><div className="summary-card-value verified-kpi">{verified}</div></div>
+        <div className="summary-card total-kpis">
+          <div className="summary-card-title">Total KPIs</div>
+          <div className="summary-card-value">{totalKpis}</div>
+        </div>
+        <div className="summary-card on-track">
+          <div className="summary-card-title">On Track</div>
+          <div className="summary-card-value">{onTrack}</div>
+        </div>
+        <div className="summary-card at-risk">
+          <div className="summary-card-title">Needs Attention</div>
+          <div className="summary-card-value">{needsAttention}</div>
+        </div>
+        <div className="summary-card completed-kpi">
+          <div className="summary-card-title">Completed</div>
+          <div className="summary-card-value">{completed}</div>
+        </div>
+        <div className="summary-card incomplete-kpi">
+          <div className="summary-card-title">Incomplete</div>
+          <div className="summary-card-value">{incomplete}</div>
+        </div>
+        <div className="summary-card verified-kpi">
+          <div className="summary-card-title">Verified</div>
+          <div className="summary-card-value">{verified}</div>
+        </div>
       </div>
 
       {/* Search & Filter Controls */}
@@ -317,7 +335,7 @@ function Staff() {
               </div>
               <div className="kpi-footer">
                 <div className="kpi-meta">
-                  Due: {kpi.dueDate}
+                  Due: {new Date(kpi.dueDate).toISOString().split('T')[0]}
                   {kpi.verifyStatus && (
                     <span className={`verification-badge ${kpi.verifyStatus.toLowerCase()}`}>
                       {kpi.verifyStatus}

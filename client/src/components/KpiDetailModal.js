@@ -289,16 +289,22 @@ function KpiDetailModal({ show, onClose, onSubmit, kpiDetails }) {
         <div className="modal-body">
           {/* KPI Details Header */}
           <div className="kpi-details-header">
-            <h5>{cleanTitle}</h5>
-            <p className="kpi-description">{kpiDetails.description}</p>
+            <div className="kpi-title-section">
+              <span className="kpi-label">Title:</span>
+              <h5>{cleanTitle}</h5>
+            </div>
+            <div className="kpi-description-section">
+              <span className="kpi-label">Description:</span>
+              <p className="kpi-description">{kpiDetails.description}</p>
+            </div>
             <div className="kpi-info-row">
               <span>Category: <strong>{kpiDetails.category}</strong></span>
               <span>Priority: <strong>{kpiDetails.priority}</strong></span>
               <span>Status: <strong>{kpiDetails.status}</strong></span>
             </div>
             <div className="kpi-info-row">
-              <span>Start Date: <strong>{kpiDetails.startDate}</strong></span>
-              <span>Due Date: <strong>{kpiDetails.dueDate}</strong></span>
+              <span>Start Date: <strong>{new Date(kpiDetails.startDate).toISOString().split('T')[0]}</strong></span>
+              <span>Due Date: <strong>{new Date(kpiDetails.dueDate).toISOString().split('T')[0]}</strong></span>
               <span>Verification: <strong>{kpiDetails.verifyStatus}</strong></span>
             </div>
           </div>

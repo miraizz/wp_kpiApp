@@ -471,3 +471,24 @@
 .clear-files-btn:hover {
   background-color: #5a6268;
 }
+
+.kpi-title-section,
+.kpi-description-section {
+  margin-bottom: 1rem;
+}
+
+.kpi-label {
+  font-weight: 600;
+  color: #666;
+  margin-right: 0.5rem;
+}
+
+.kpi-title-section h5 {
+  display: inline;
+  margin: 0;
+}
+
+.kpi-description-section .kpi-description {
+  display: inline;
+  margin: 0;
+}

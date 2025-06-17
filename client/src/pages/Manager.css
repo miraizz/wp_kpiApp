@@ -70,25 +70,41 @@
 =================== */
 .manager-cards-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
+}
+
+.aliff-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    transition: transform 0.2s ease;
+}
+
+.aliff-card:hover {
+    transform: translateY(-2px);
 }
 
 .manager-card-name {
-    font-size: 16px;
-    color: #000;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.5rem;
 }
 
 .manager-card-number {
-    font-size: 30px;
-    font-weight: 700;
-    color: #000;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
 }
 
 .manager-card-description {
-    font-size: 12px;
-    color: #6b7280;
+    font-size: 0.8rem;
+    color: #888;
+    margin: 0;
 }
 
 /* ===================
@@ -234,23 +250,21 @@
    Team Panel
 =================== */
 .team-container {
-  display: grid;
-  grid-template-columns: 2fr 3fr;
-  gap: 1.5rem;
-  width: 100%;
-}
-
-@media (min-width: 1024px) {
-    .team-container {
-        grid-template-columns: 1fr 2fr;
-    }
-}
-
-.team-list {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    display: flex;
+    gap: 2rem;
     padding: 1rem;
+    height: calc(100vh - 200px); /* Adjust based on your header height */
+}
+
+.left-column {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.right-column {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 1rem;
 }
 
 .team-card {
@@ -275,8 +289,8 @@
     display: flex;
     align-items: center;
     padding: 1rem;
-    cursor: pointer;
     border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
 }
 
 .team-item:hover {
@@ -307,22 +321,139 @@
 .staff-name {
     font-size: 1rem;
     font-weight: 500;
+    margin: 0;
 }
 
-.staff-department,
-.kpi-count {
+.staff-department {
     font-size: 0.875rem;
+    color: #666;
+    margin: 0;
+}
+
+.staff-score {
+    margin-left: 1rem;
+}
+
+.score-badge {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Staff Details Styles */
+.staff-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.avatar-large {
+    width: 64px;
+    height: 64px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-right: 1.5rem;
+}
+
+.staff-info-large {
+    flex-grow: 1;
+}
+
+.staff-info-large h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.staff-info-large p {
+    margin: 0.25rem 0 0;
     color: #666;
 }
 
-.aliff-card {
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    text-align: center;
-    width: 100%;
-    max-width: 100%;
+.score-display {
+    text-align: right;
+}
+
+.score-display h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #666;
+}
+
+.score-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Charts Container */
+.charts-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.chart-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-card h3 {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.chart-wrapper {
+    height: 300px;
+}
+
+/* Scoring System */
+.scoring-system {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.scoring-system h3 {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.scoring-system ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.scoring-system li {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #555;
+}
+
+.select-prompt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #666;
+    font-size: 1.2rem;
 }
 
 /* ===================
@@ -337,6 +468,10 @@
 @media (max-width: 1024px) {
     .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .charts-container {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -360,5 +495,13 @@
 
     .chart-donut .chart-container {
         max-width: none;
+    }
+
+    .team-container {
+        flex-direction: column;
+    }
+
+    .left-column {
+        width: 100%;
     }
 }
